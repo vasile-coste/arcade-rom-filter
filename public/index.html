@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
+  <title>
+    Arcade rom filter
+  </title>
+  <link href="/css/style.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+
+  <div class="max-w-7xl mx-auto py-2 -px-2 px-2 h-screen flex flex-col justify-between">
+
+    <div class="w-full overflow-auto max-h-screen">
+      <div class="py-2 text-2xl font-semibold">
+        Select destination emulator
+      </div>
+
+      <div class="w-full border-2">
+        <div class="flex">
+          <input id="emu-1" type="radio" value="mame" name="emu" class="hidden">
+          <label for="emu-1" class="chooseRadio w-full bg-gray-50 px-4 py-3 cursor-pointer">
+            Mame
+          </label>
+        </div>
+        <div class="flex">
+          <input id="emu-2" type="radio" value="fbneo" name="emu" class="hidden">
+          <label for="emu-2" class="chooseRadio w-full bg-gray-50 px-4 py-3 cursor-pointer">
+            FB Neo
+          </label>
+        </div>
+      </div>
+
+      <!-- use default files -->
+      <div class="hidden w-full my-6 useDefault">
+        <div class="py-2 text-2xl font-semibold">
+          Use default files?
+        </div>
+        <div class="w-full border-2 p-2">
+          <input type="checkbox" id="useDefault">
+          <label for="useDefault">Use default files</label>
+        </div>
+        <div class="italic text-sm">
+          Will use files provided by the aplication itself.
+        </div>
+      </div>
+
+      <!-- success -->
+      <div class="hidden w-full mt-4 nextOption p-2 text-sm font-semibold bg-green-600 text-white" id="continue">
+        All files are in place<br>
+        Continue to next step!
+      </div>
+
+      <!-- error -->
+      <div class="hidden w-full mt-4 nextOption p-2 text-sm font-semibold bg-yellow-600 text-white" id="selectFiles">
+      </div>
+
+      <!-- select file for mame -->
+      <div class="hidden w-full mt-2 nextOption mame">
+        <div class="py-2 text-2xl font-semibold">
+          Select .XML/.DAT and .INI files
+        </div>
+        <div class="w-full border-2 px-2 py-3">
+          <div class="flex">
+            <input class="uploadFile hidden" type="file" id="mame_xml" accept=".xml,.dat">
+            <label class="cursor-pointer bg-blue-700 text-white flex items-center justify-center w-48 text-center"
+              for="mame_xml">
+              Choose .XML/.DAT
+            </label>
+
+            <div class="progress-wrp w-full" id="mame_xml-progress">
+              <div class="progress-bar"></div>
+              <div class="status">0%</div>
+            </div>
+          </div>
+          <div class="flex mt-1">
+            <input class="uploadFile hidden" type="file" id="mame_ini" accept=".ini">
+            <label class="cursor-pointer bg-blue-700 text-white flex items-center justify-center w-48 text-center"
+              for="mame_ini">
+              Choose catver.ini
+            </label>
+
+            <div class="progress-wrp w-full" id="mame_ini-progress">
+              <div class="progress-bar"></div>
+              <div class="status">0%</div>
+            </div>
+          </div>
+          <div class="w-full mt-1">
+            <div class="text-lg font-semibold">mame.ini must contain multiple lines with <b>rom=cat1 / cat2</b> example:
+            </div>
+            <div>
+              005=Maze / Shooter Small <br>
+              09825_67907=System / Device <br>
+              100lions=Slot Machine / Video Slot <br>
+              10yard=Sports / Football <br>
+              ...
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- select file for fbneo -->
+      <div class="hidden w-full mt-2 nextOption fbneo">
+        <div class="py-2 text-2xl font-semibold">
+          Select .XML/.DAT file
+        </div>
+        <div class="w-full border-2 px-2 py-3">
+          <div class="flex">
+            <input class="uploadFile hidden" type="file" id="fbneo_xml" accept=".xml,.dat">
+            <label class="cursor-pointer bg-blue-700 text-white flex items-center justify-center w-48" for="fbneo_xml">
+              Choose .XML/.DAT
+            </label>
+
+            <div class="progress-wrp w-full" id="fbneo_xml-progress">
+              <div class="progress-bar"></div>
+              <div class="status">0%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+    <!-- continue to next step -->
+    <div class="flex pt-4 justify-between">
+      <button class="bg-slate-500 px-4 py-2 text-white rounded-md" onclick="exitApp()">
+        Exit
+      </button>
+      <button class="bg-green-600 px-4 py-2 text-white rounded-md mr-4" onclick="setEmulator()">
+        Continue
+      </button>
+    </div>
+
+  </div>
+
+
+  <script src="/js/jquery.min.js"></script>
+  <script src="/global.js"></script>
+  <script defer>
+    $('.chooseRadio').on('click', function () {
+      $('.chooseRadio').removeClass('bg-blue-600 text-white');
+      $('.chooseRadio').removeClass('bg-gray-50');
+      $(this).addClass('bg-blue-600 text-white');
+
+      // show next part
+      $('.nextOption').hide();
+      $('.useDefault').show();
+
+      $('#useDefault').prop('checked', true);
+    });
+
+    $('#useDefault').on('click', function () {
+      if ($('#useDefault').is(':checked') == false) {
+        checkFiles($('input[name="emu"]:checked').val());
+      } else {
+        $('.nextOption').hide();
+      }
+    });
+    $('.uploadFile').on('change', function () {
+      const file = $(this)[0].files[0];
+      uploadFile(file, $(this).prop('id'))
+    })
+  </script>
+</body>
+
+</html>

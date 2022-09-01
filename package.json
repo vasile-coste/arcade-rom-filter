@@ -1,0 +1,36 @@
+{
+  "name": "arcade-rom-filter",
+  "version": "1.0.0",
+  "description": "",
+  "bin": "index.js",
+  "main": "index.js",
+  "scripts": {
+    "dev": "node index.js",
+    "pkg": "pkg package.json -t node14-win-x64 --out-path dist/",
+    "css-generate": "npx tailwindcss -i public/css/tailwind.css -o public/css/style.css",
+    "css": "npx tailwindcss -i public/css/tailwind.css -o public/css/style.css --watch"
+  },
+  "pkg": {
+    "assets": [
+      "public/**/*",
+      "default/*"
+    ]
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "autoprefixer": "^10.4.8",
+    "body-parser": "^1.20.0",
+    "express": "^4.18.1",
+    "express-fileupload": "^1.4.0",
+    "open": "^8.4.0",
+    "path": "^0.12.7",
+    "portfinder": "^1.0.32",
+    "tailwindcss": "^3.1.8"
+  },
+  "devDependencies": {
+    "eslint": "^8.18.0",
+    "prettier": "^2.7.1"
+  }
+}
