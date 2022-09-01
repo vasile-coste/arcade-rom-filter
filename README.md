@@ -1,3 +1,6 @@
+# THIS IS A WORK IN PROGRESS
+I'm currenly doing this in my free time
+
 # Arcade rom filter
 This is an app that filters roms from MAME or FB Neo
 
