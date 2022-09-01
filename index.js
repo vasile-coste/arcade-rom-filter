@@ -1,5 +1,3 @@
-// https://github.com/libretro/FBNeo/tree/master/dats
-
 const Express = require('express');
 const fileUpload = require('express-fileupload');
 const http = require('http');

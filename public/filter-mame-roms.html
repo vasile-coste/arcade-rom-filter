@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
+  <title>
+    Arcade rom filter
+  </title>
+  <link href="/css/style.css" rel="stylesheet" type="text/css" />
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+</head>
+
+<body>
+
+  <div class="mx-auto py-2 -px-2 px-2 h-screen flex flex-col justify-between">
+
+    <div class="w-full overflow-auto max-h-screen">
+      <div class="py-1 text-2xl font-semibold">
+        Filter mame roms
+      </div>
+
+      <div class="flex flex-row">
+        <div class="w-full border-2 p-1">
+          <div class="text-lg font-semibold">Main Categories</div>
+          <div class="italic text-sm">Select which game category you want to keep</div>
+          <div class="w-full">
+            <input type="checkbox" value="categories" id="toggle-categories">
+            <label class="toggle-all cursor-pointer" for="toggle-categories">Toggle All</label>
+          </div>
+          <div class="w-full h-52 my-2 overflow-y-auto" id="categories">
+          </div>
+        </div>
+        <div class="w-full border-2 p-1">
+          <div class="text-lg font-semibold">Sub Categories</div>
+          <div class="italic text-sm">Select which game sub category you want to keep</div>
+          <div class="w-full">
+            <input type="checkbox" value="sub-categories" id="toggle-sub-categories">
+            <label class="toggle-all cursor-pointer" for="toggle-sub-categories">Toggle All</label>
+          </div>
+          <div class="w-full h-52 my-2 overflow-y-auto" id="sub-categories">
+          </div>
+        </div>
+        <div class="w-full border-2 p-1">
+          <div class="text-lg font-semibold">Region</div>
+          <div class="italic text-sm">Select which regions you want to exclude</div>
+          <div class="w-full">
+            <input type="checkbox" checked value="regions" id="toggle-regions">
+            <label class="toggle-all cursor-pointer" for="toggle-regions">Toggle All</label>
+          </div>
+          <div class="w-full h-52 my-2 overflow-y-auto" id="regions">
+          </div>
+        </div>
+        <div class="w-full border-2 p-1">
+          <div class="text-lg font-semibold">Games Settings</div>
+          <div class="italic text-sm">check/uncheck want you need</div>
+          <div class="w-full h-52 my-2 overflow-y-auto">
+            <div class="w-full">
+              <input type="checkbox" class="game-settings" checked value="game-unique" id="game-unique">
+              <label for="game-unique">Only unique</label>
+            </div>
+            <div class="w-full">
+              <input type="checkbox" class="game-settings" checked value="game-good" id="game-good">
+              <label for="game-good">Working games</label>
+            </div>
+            <div class="w-full">
+              <input type="checkbox" class="game-settings" value="game-imperfect" id="game-imperfect">
+              <label for="game-imperfect">Imperfect games</label>
+            </div>
+            <div class="w-full">
+              <input type="checkbox" class="game-settings" value="game-preliminary" id="game-preliminary">
+              <label for="game-preliminary">Preliminary games</label>
+            </div>
+            <div id="game-extra"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- extra filters -->
+      <div class="flex flex-row mt-1">
+        <div class="w-full border-2 p-1">
+          <div class="text-lg font-semibold">Extra filters</div>
+          <div class="italic text-sm">
+            Even after the above filters, there may still be some clones with different names, sets or versions.
+            This will exclude all game roms that contain this exact string.
+          </div>
+          <div class="w-full">
+            <input type="checkbox" checked value="game-clones" id="toggle-game-clones">
+            <label class="toggle-all cursor-pointer" for="toggle-game-clones">Toggle All</label>
+          </div>
+          <div class="grid grid-cols-3 h-36 my-2 overflow-y-auto" id="game-clones">
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+
+    <!-- continue to next step -->
+    <div class="flex pt-4 justify-between">
+      <button class="bg-slate-500 px-4 py-2 text-white rounded-md" onclick="exitApp()">
+        Exit
+      </button>
+      <button class="bg-green-600 px-4 py-2 text-white rounded-md mr-4" onclick="filterGames()">
+        Filter roms
+      </button>
+    </div>
+
+  </div>
+
+
+  <script src="/js/jquery.min.js"></script>
+  <script src="/global.js"></script>
+  <script src="/filter-mame-roms.js"></script>
+  <script>
+    $(".toggle-all").on('click', function() {
+        const id = $(this).prop('for');
+        const isChecked = $('#'+id).is(':checked');
+        const inputs = $('#'+id).val();
+        $('.'+inputs).prop('checked', !isChecked);
+    });
+  </script>
+</body>
+
+</html>

@@ -8,11 +8,12 @@
     Arcade rom filter
   </title>
   <link href="/css/style.css" rel="stylesheet" type="text/css" />
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
 </head>
 
 <body>
 
-  <div class="max-w-7xl mx-auto py-2 -px-2 px-2 h-screen flex flex-col justify-between">
+  <div class="mx-auto py-2 -px-2 px-2 h-screen flex flex-col justify-between">
 
     <div class="w-full overflow-auto max-h-screen">
       <div class="py-2 text-2xl font-semibold">
@@ -34,34 +35,35 @@
         </div>
       </div>
 
-      <!-- use default files -->
-      <div class="hidden w-full my-6 useDefault">
-        <div class="py-2 text-2xl font-semibold">
-          Use default files?
-        </div>
-        <div class="w-full border-2 p-2">
-          <input type="checkbox" id="useDefault">
-          <label for="useDefault">Use default files</label>
-        </div>
-        <div class="italic text-sm">
-          Will use files provided by the aplication itself.
-        </div>
-      </div>
-
       <!-- success -->
-      <div class="hidden w-full mt-4 nextOption p-2 text-sm font-semibold bg-green-600 text-white" id="continue">
+      <div class="hidden w-full mt-4 p-2 text-sm font-semibold bg-green-600 text-white" id="continue">
         All files are in place<br>
         Continue to next step!
       </div>
 
       <!-- error -->
-      <div class="hidden w-full mt-4 nextOption p-2 text-sm font-semibold bg-yellow-600 text-white" id="selectFiles">
+      <div class="hidden w-full mt-4 p-2 text-sm font-semibold bg-yellow-600 text-white" id="selectFiles">
       </div>
 
       <!-- select file for mame -->
       <div class="hidden w-full mt-2 nextOption mame">
         <div class="py-2 text-2xl font-semibold">
           Select .XML/.DAT and .INI files
+        </div>
+        <div class="text-sm">
+          Can be XML downloaded from 
+          <a class="text-blue-700 font-semibold" href="https://www.mamedev.org/release.html" target="_blank">
+            here
+          </a>
+          <br />
+          Can be INI downloaded from 
+          <a class="text-blue-700 font-semibold" href="https://raw.githubusercontent.com/mamesupport/catver.ini/master/catver.ini" target="_blank">
+            here
+          </a>
+           or 
+           <a class="text-blue-700 font-semibold" href="https://emulationrealm.net/downloads/file/2831-catlist-catver" target="_blank">
+             here
+           </a>
         </div>
         <div class="w-full border-2 px-2 py-3">
           <div class="flex">
@@ -88,17 +90,6 @@
               <div class="status">0%</div>
             </div>
           </div>
-          <div class="w-full mt-1">
-            <div class="text-lg font-semibold">mame.ini must contain multiple lines with <b>rom=cat1 / cat2</b> example:
-            </div>
-            <div>
-              005=Maze / Shooter Small <br>
-              09825_67907=System / Device <br>
-              100lions=Slot Machine / Video Slot <br>
-              10yard=Sports / Football <br>
-              ...
-            </div>
-          </div>
         </div>
       </div>
 
@@ -106,6 +97,12 @@
       <div class="hidden w-full mt-2 nextOption fbneo">
         <div class="py-2 text-2xl font-semibold">
           Select .XML/.DAT file
+        </div>
+        <div class="text-sm">
+          Can be XML downloaded from 
+          <a class="text-blue-700 font-semibold" href=https://github.com/libretro/FBNeo/blob/master/dats/FinalBurn%20Neo%20(ClrMame%20Pro%20XML%2C%20Arcade%20only).dat" target="_blank">
+            here
+          </a>
         </div>
         <div class="w-full border-2 px-2 py-3">
           <div class="flex">
@@ -141,31 +138,7 @@
 
   <script src="/js/jquery.min.js"></script>
   <script src="/global.js"></script>
-  <script defer>
-    $('.chooseRadio').on('click', function () {
-      $('.chooseRadio').removeClass('bg-blue-600 text-white');
-      $('.chooseRadio').removeClass('bg-gray-50');
-      $(this).addClass('bg-blue-600 text-white');
-
-      // show next part
-      $('.nextOption').hide();
-      $('.useDefault').show();
-
-      $('#useDefault').prop('checked', true);
-    });
-
-    $('#useDefault').on('click', function () {
-      if ($('#useDefault').is(':checked') == false) {
-        checkFiles($('input[name="emu"]:checked').val());
-      } else {
-        $('.nextOption').hide();
-      }
-    });
-    $('.uploadFile').on('change', function () {
-      const file = $(this)[0].files[0];
-      uploadFile(file, $(this).prop('id'))
-    })
-  </script>
+  <script src="/index.js"></script>
 </body>
 
 </html>
