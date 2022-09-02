@@ -13,7 +13,7 @@
 
 <body>
 
-  <div class="mx-auto py-2 -px-2 px-2 h-screen flex flex-col justify-between">
+  <div class="mx-auto py-2 -px-2 px-2 h-screen flex flex-col justify-between" id="app">
 
     <div class="w-full overflow-auto max-h-screen">
       <div class="py-1 text-2xl font-semibold">
@@ -21,62 +21,88 @@
       </div>
 
       <div class="flex flex-row">
+        <!-- Main Categories -->
         <div class="w-full border-2 p-1">
           <div class="text-lg font-semibold">Main Categories</div>
           <div class="italic text-sm">Select which game category you want to keep</div>
           <div class="w-full">
-            <input type="checkbox" value="categories" id="toggle-categories">
-            <label class="toggle-all cursor-pointer" for="toggle-categories">Toggle All</label>
+            <input type="checkbox" v-model="toggleCategories" id="toggle-categories">
+            <label class="cursor-pointer" for="toggle-categories">Toggle All</label>
           </div>
-          <div class="w-full h-52 my-2 overflow-y-auto" id="categories">
+          <div class="w-full h-52 my-2 overflow-y-auto">
+            <div class="w-full hover:bg-gray-200 px-1" v-for="(item, cnt) in mainCategories">
+              <input type="checkbox" v-model="selectedCategories" :value="item" :id="'cat-' + cnt">
+              <label class="cursor-pointer" :for="'cat-'+cnt">{{item}}</label>
+            </div>
           </div>
         </div>
+        <!-- Sub Categories -->
         <div class="w-full border-2 p-1">
           <div class="text-lg font-semibold">Sub Categories</div>
           <div class="italic text-sm">Select which game sub category you want to keep</div>
-          <div class="w-full">
-            <input type="checkbox" value="sub-categories" id="toggle-sub-categories">
-            <label class="toggle-all cursor-pointer" for="toggle-sub-categories">Toggle All</label>
+          <div class="flex flex-row">
+            <div class="w-1/2">
+              <input type="checkbox" v-model="toggleSubCategories" id="toggle-sub-categories">
+              <label class="cursor-pointer" for="toggle-sub-categories">Toggle All</label>
+            </div>
+            <div class="w-1/2">
+              <input class="w-full border-2 rounded-md" type="text" v-model="findSubCategory" placeholder="Find...">
+            </div>
           </div>
-          <div class="w-full h-52 my-2 overflow-y-auto" id="sub-categories">
+          <div class="w-full h-52 my-2 overflow-y-auto">
+            <div :class="{'hidden' : findSubCategory && !item.toLowerCase().includes(findSubCategory.toLowerCase()) }"
+              class="w-full hover:bg-gray-200 px-1" v-for="(item, cnt) in subCategories">
+              <input type="checkbox" v-model="selectedSubCategories" :value="item" :id="'subcat-' + cnt">
+              <label class="cursor-pointer" :for="'subcat-'+cnt">{{item}}</label>
+            </div>
           </div>
         </div>
+        <!-- Region -->
         <div class="w-full border-2 p-1">
           <div class="text-lg font-semibold">Region</div>
           <div class="italic text-sm">Select which regions you want to exclude</div>
           <div class="w-full">
-            <input type="checkbox" checked value="regions" id="toggle-regions">
-            <label class="toggle-all cursor-pointer" for="toggle-regions">Toggle All</label>
+            <input type="checkbox" v-model="toggleRegions" id="toggle-regions">
+            <label class="cursor-pointer" for="toggle-regions">Toggle All</label>
           </div>
-          <div class="w-full h-52 my-2 overflow-y-auto" id="regions">
+          <div class="w-full h-52 my-2 overflow-y-auto">
+            <div class="w-full hover:bg-gray-200 px-1" v-for="(item, cnt) in regions">
+              <input type="checkbox" v-model="selectedRegions" :value="item" :id="'regions-' + cnt">
+              <label class="cursor-pointer" :for="'regions-'+cnt">{{item}}</label>
+            </div>
           </div>
         </div>
+        <!-- Games Settings -->
         <div class="w-full border-2 p-1">
           <div class="text-lg font-semibold">Games Settings</div>
           <div class="italic text-sm">check/uncheck want you need</div>
           <div class="w-full h-52 my-2 overflow-y-auto">
-            <div class="w-full">
-              <input type="checkbox" class="game-settings" checked value="game-unique" id="game-unique">
-              <label for="game-unique">Only unique</label>
+            <div class="w-full hover:bg-gray-200 px-1">
+              <input type="checkbox" v-model="gameSettings.gameUnique" id="game-unique">
+              <label for="game-unique">Keep unique only</label>
             </div>
-            <div class="w-full">
-              <input type="checkbox" class="game-settings" checked value="game-good" id="game-good">
-              <label for="game-good">Working games</label>
+            <div class="w-full hover:bg-gray-200 px-1">
+              <input type="checkbox" v-model="gameSettings.gameGood" id="game-good">
+              <label for="game-good">Keep working games</label>
             </div>
-            <div class="w-full">
-              <input type="checkbox" class="game-settings" value="game-imperfect" id="game-imperfect">
-              <label for="game-imperfect">Imperfect games</label>
+            <div class="w-full hover:bg-gray-200 px-1">
+              <input type="checkbox" v-model="gameSettings.gameImperfect" id="game-imperfect">
+              <label for="game-imperfect">Keep imperfect games</label>
             </div>
-            <div class="w-full">
-              <input type="checkbox" class="game-settings" value="game-preliminary" id="game-preliminary">
-              <label for="game-preliminary">Preliminary games</label>
+            <div class="w-full hover:bg-gray-200 px-1">
+              <input type="checkbox" v-model="gameSettings.gamePreliminary" id="game-preliminary">
+              <label for="game-preliminary">Keep preliminary games</label>
             </div>
-            <div id="game-extra"></div>
+            <!-- extra game settings -->
+            <div class="w-full hover:bg-gray-200 px-1" v-for="(item, cnt) in excludeGamesContaining">
+              <input type="checkbox" v-model="selectedExcludeGamesContaining" :value="item" :id="'extragame-' + cnt">
+              <label class="cursor-pointer" :for="'extragame-'+cnt">Exclude games with {{item}}</label>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- extra filters -->
+      <!-- extra filters for roms clones -->
       <div class="flex flex-row mt-1">
         <div class="w-full border-2 p-1">
           <div class="text-lg font-semibold">Extra filters</div>
@@ -84,11 +110,22 @@
             Even after the above filters, there may still be some clones with different names, sets or versions.
             This will exclude all game roms that contain this exact string.
           </div>
-          <div class="w-full">
-            <input type="checkbox" checked value="game-clones" id="toggle-game-clones">
-            <label class="toggle-all cursor-pointer" for="toggle-game-clones">Toggle All</label>
+          <div class="flex">
+            <div>
+              <input type="checkbox" v-model="toggleGameClones" id="toggle-game-clones">
+              <label class="cursor-pointer" for="toggle-game-clones">Toggle All</label>
+            </div>
+            <div class="ml-2">
+              <input class="w-full border-2 rounded-md" type="text" v-model="findClones" placeholder="Find...">
+            </div>
           </div>
-          <div class="grid grid-cols-3 h-36 my-2 overflow-y-auto" id="game-clones">
+          <div class="grid grid-cols-3 h-36 my-2 overflow-y-auto">
+            <div :class="{'hidden' : findClones && !item.toLowerCase().includes(findClones.toLowerCase()) }"
+              class="w-full hover:bg-gray-200 px-1" v-for="(item, cnt) in excludeGamesConsideredClones">
+              <input type="checkbox" v-model="selectedExcludeGamesConsideredClones" :value="item"
+                :id="'gameclone-' + cnt">
+              <label class="cursor-pointer" :for="'gameclone-'+cnt">{{item}}</label>
+            </div>
           </div>
         </div>
       </div>
@@ -98,10 +135,12 @@
 
     <!-- continue to next step -->
     <div class="flex pt-4 justify-between">
-      <button class="bg-slate-500 px-4 py-2 text-white rounded-md" onclick="exitApp()">
-        Exit
-      </button>
-      <button class="bg-green-600 px-4 py-2 text-white rounded-md mr-4" onclick="filterGames()">
+      <a href="/" class="bg-slate-500 px-4 py-2 text-white rounded-md">
+        Back
+      </a>
+      <button :disabled="loading"
+        class="bg-green-600 px-4 py-2 text-white rounded-md mr-4 disabled:bg-gray-200 disabled:text-black disabled:cursor-not-allowed"
+        @click="filterRames">
         Filter roms
       </button>
     </div>
@@ -110,14 +149,522 @@
 
 
   <script src="/js/jquery.min.js"></script>
-  <script src="/global.js"></script>
-  <script src="/filter-mame-roms.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
   <script>
-    $(".toggle-all").on('click', function() {
-        const id = $(this).prop('for');
-        const isChecked = $('#'+id).is(':checked');
-        const inputs = $('#'+id).val();
-        $('.'+inputs).prop('checked', !isChecked);
+    new Vue({
+      el: "#app",
+      data: {
+        // default values
+        loading: false,
+        // data
+        categoriesMap: { "Maze": ["Shooter Small", "Collect", "Change Surface", "Shooter Large", "Outline", "Surround", "Escape", "Collect & Put", "Digging", "Blocks", "Cross", "Ladders", "Driving", "Defeat Enemies", "Paint", "Fighter", "Move and Sort", "Integrate", "Collect * Mature *", "Ball Guide", "Escape * Mature *", "Misc.", "Driving * Mature *", "Digging * Mature *", "Run Jump"], "System": ["Device", "BIOS"], "Slot Machine": ["Video Slot", "Reels", "Video Slot * Mature *"], "Sports": ["Football", "Soccer", "Basketball", "Baseball", "Wrestling", "Tennis", "Skateboarding", "Track & Field", "Pool", "Volleyball", "Fishing", "Golf", "Bowling", "Skiing", "Darts", "Hockey", "Misc.", "Horse Racing", "Armwrestling", "Boxing", "Pool * Mature *", "Multiplay", "Bull Fighting", "Sumo", "Rugby Football", "Cards", "Hang Gliding", "Roller", "Horseshoes", "Handball", "Volley - Soccer", "Dodgeball", "Ping Pong", "SkyDiving", "Shuffleboard", "Swimming", "Gun"], "Handheld": ["Plug n' Play TV Game / Music", "Plug n' Play TV Game / Multi-Games", "Plug n' Play TV Game / Fighting", "Plug n' Play TV Game / Pinball", "Plug n' Play TV Game / Multi-Sport", "Plug n' Play TV Game / Tennis", "Plug n' Play TV Game / Shoot 'em Up", "Electronic Game", "Pocket Device - Pad - PDA", "Plug n' Play TV Game / Fishing", "Home Videogame Console", "Plug n' Play TV Game / Quiz", "Plug n' Play TV Game / Driving", "Child Computer", "Plug n' Play TV Game / TV Show", "Plug n' Play TV Game / Ping Pong", "Plug n' Play TV Game / Dance", "Plug n' Play TV Game", "Plug n' Play TV Game / Role Playing", "Plug n' Play TV Game / Action", "Plug n' Play TV Game / Fashion", "Plug n' Play TV Game / Bowling", "Plug n' Play TV Game / Baseball", "Plug n' Play TV Game / Mini-Golf", "Horoscope", "Educational Game", "Plug n' Play TV Game / Hunting", "Plug n' Play TV Game / Golf", "Plug n' Play TV Game / Wrestling", "Plug n' Play TV Game / Casino", "Console Cartridge", "Pocket Electronic Game", "Plug n' Play TV Game / Fitness", "Plug n' Play TV Game / Maze", "Plug n' Play TV Game / Shooter", "Plug n' Play TV Game / Sudoku", "Barcode Scanner", "Plug n' Play TV Game / Puzzle", "Plug n' Play TV Game / Basketball", "Plug n' Play TV Game / Boxe", "Plug n' Play TV Game / Criket", "Plug n' Play TV Game / Football", "Plug n' Play TV Game / Compilation", "Plug n' Play TV Game / Snowboard", "Plug n' Play TV Game / Skateboard", "Plug n' Play TV Game / Soccer", "E-Book Reading", "Plug n' Play TV Game / Board Game", "Plug n' Play TV Game / Reader", "Plug n' Play TV Game / Trail", "Plug n' Play TV Game / Painting", "Handpuppet Toy"], "Game Console": ["Home Videogame", "Multi-Games", "Fitness Game", "Gambling", "Home Videogame Console Expansion"], "Electromechanical": ["Misc.", "Pinball", "Crane Machine", "Reels", "Basketball", "Bingo", "Coin-Operated Rocking Games", "Shooting", "Beat Up", "Utilities", "Darts", "Skill", "Shooter", "Hockey", "Change Money", "Bowling"], "Driving": ["Truck Guide", "1st Person", "Motorbike", "Race 1st Person", "Race (chase view)", "Plane", "Race Track", "Misc.", "Boat", "Race (chase view) Bike", "Race", "Race Bike", "Demolition Derby", "Ambulance Guide", "FireTruck Guide", "Motorbike (Motocross)", "Guide and Collect", "Landing", "Guide and Shoot", "Catch"], "Shooter": ["Flying Vertical", "Gun", "Field", "Flying Horizontal", "Misc. Horizontal", "Gallery", "Flying (chase view)", "Misc. Vertical", "Flying 1st Person", "1st Person", "3rd Person", "Misc.", "Walking", "Flying", "Driving (chase view)", "Driving", "Driving Vertical", "2.5D", "Driving Diagonal", "Versus", "Flying * Mature *", "Driving Horizontal", "Driving 1st Person", "Command", "Gallery * Mature *", "Flying Diagonal", "Submarine", "Motorbike", "Outline * Mature *", "Flying Horizontal * Mature *", "Underwater", "Flying Vertical * Mature *"], "MultiGame": ["Compilation", "Mini-Games", "Gambling", "Gambling Board", "Compilation * Mature *"], "Music": ["JukeBox", "MIDI Sound Generator", "Drum Machine", "Synthesizer", "Sound Module", "Storage Media", "Audio Sequencer", "Keyboard", "Vocoder - Harmonizer", "Karaoke Machine", "Sampler Editor", "Instruments", "Synthesizer Module", "Sequencer", "Guitar Effects", "Audio Chip Emulator", "Guitar Synthesizer", "Digital Piano", "Guitar Synthesizer Module", "Workstation", "Tone Generator", "Drum Machine Module", "Misc.", "Electronic Piano", "MIDI Player", "Player"], "Computer": ["Workstation - Server", "Business - Terminal", "Single Board", "Training Board", "Home System", "Portable Digital Teletype", "Construction Kit", "Misc.", "Development System", "Microcomputer", "Punched Car", "Word-processing Machine", "Graphic Terminal", "Laptop - Notebook - Portable", "Cablenet Controller", "Child Computer", "TeleText Terminal", "Protocol Analyzer", "TTL", "Pocket PC", "Pocket Computer", "Workstation", "Video Production", "Educational Game", "Milling", "Graphics Workstation", "Programming Machine"], "Casino": ["Cards", "Misc.", "Multiplay", "Bingo", "Racing", "Lottery", "Cards * Mature *", "Unknown", "BlackJack", "Roulette", "Misc. * Mature *", "Dice", "Horse Racing", "Multi-Games", "Video Slot", "Skill Game"], "Puzzle": ["Match * Mature *", "Match", "Sliding", "Drop", "Toss", "Drop * Mature *", "Maze", "Misc.", "Toss * Mature *", "Reconstruction", "Outline", "Outline * Mature *", "Reconstruction * Mature *", "Paint * Mature *", "Misc. * Mature *", "Sliding * Mature *", "Cards"], "Misc.": ["Clock", "Print Club", "Coin Pusher", "Toy Robot", "Multiplay", "Catch", "Bank-teller Terminal", "Electronic Board Game", "Laserdisc Simulator", "Teletype", "Document Processors", "Toy Cars", "Spank * Mature *", "Device Programmer", "Cash Counter", "Unknown", "Electronic Typewriter", "Fingerprint Reader", "Jump and Bounce", "Satellite Receiver", "Speech Synthesizer", "Prediction", "EPROM Programmer", "Engine Control Unit", "Graphics Display Controller", "Dartboard", "Electronic Game", "Wavetables Generator", "Car Voice Alert", "Mini-Games", "Similar Bowling Game", "Pachinko", "Digital MultiMeter (DMM)", "Drum Machine", "Dog Sitter", "Gambling Board", "Educational Game", "Versus", "Response Time", "DVD Reader-Writer", "In Circuit Emulator", "Time-Access Control Terminal", "Virtual Environment", "VTR Control", "Hot-air Balloon", "Shoot Photos", "Portable Media Player", "Graphic Tablet", "Robot Control", "Temperature Controller", "DVD Player", "Order", "Dot-Matrix Display", "Credit Card Terminal", "Laserdisc Player"], "Tabletop": ["Mahjong * Mature *", "Cards", "Hanafuda * Mature *", "Mahjong", "Misc.", "Multiplay", "Othello - Reversi * Mature *", "Hanafuda", "Multi-Games", "Match * Mature *", "Renju", "Go", "Shougi", "Othello - Reversi"], "Fighter": ["2.5D", "Versus", "2D", "3D", "Vertical", "Versus * Mature *", "Misc.", "Field", "Compilation", "Driving Vertical", "Versus Co-op", "Multiplay"], "Utilities": ["EPROM Programmer", "Modem", "Network Controller", "Monitor", "Disk Unit", "Test", "Update", "On-board BUS Ticketing", "Devices Communication", "Tobacco Vending Machine", "Video Switcher", "Arcade System", "Network Processor", "Speech Synthesizer", "Redemption Board", "Thermometer", "Light Gun", "Weather Station", "Analog Filter Module", "Test ROM", "Videosynthesizer", "PAL Demo", "Weight Scale", "Arcade Switcher", "Electronic Digital Thermostat", "TV Test Pattern Generator", "Videocassette Player/Recorder", "Robot Control", "Wave Synthesizer", "Weather Forecast Machine", "Clock"], "Quiz": ["Questions in Japanese", "Questions in English", "Questions in English * Mature *", "Questions in Korean", "Questions in Italian", "Questions in German", "Questions in Japanese * Mature *", "Hangman game", "Questions in Greek", "Questions in Spanish", "Questions in Chinese", "Questions in French", "Questions in Norwegian"], "Platform": ["Run Jump", "Shooter Scrolling", "Fighter Scrolling", "Run, Jump & Scrolling", "Fighter", "Shooter", "Run Jump * Mature *", "Maze"], "Board Game": ["Chess Machine", "Backgammon", "Bridge Machine", "Checker Machine", "Dame Machine", "Cards"], "Medal Game": ["Stone-Scissor-Paper", "Action", "Misc.", "Bingo", "Casino", "Powerboat Racing", "Sport", "Adventure", "Timing", "Horse Racing", "Baseball", "Aquarium", "Versus", "Coin Pusher", "Driving", "Compilation", "Pinball", "Cards", "Dance"], "Calculator": ["Pocket Computer", "Astrological Computer", "Desktop Electronic Calculator", "Pocket Calculator", "Math Game Learning", "Electronic Organizer", "Chemical Calculations", "Talking Calculator"], "Arcade": ["Pinball", "Pinball * Mature *"], "Telephone": ["Car Phone", "Landline Phone", "ComputerPhone", "Mobile Phone - Smartphone", "Landline phone"], "Climbing": ["Tree - Plant", "Building", "Mountain - Wall"], "Whac-A-Mole": ["Hammer", "Shooter", "Fighter", "Gun", "Footsteps"], "Redemption Game": ["Action", "Shooter", "Crane Machine", "Driving", "Reaction", "Flying", "Soccer", "Pinball"], "TTL * Shooter": ["Gallery", "Versus", "Flying Vertical", "Gun", "Flying 1st Person", "Field", "Underwater", "Misc. Vertical"], "Ball & Paddle": ["Breakout", "Breakout * Mature *", "Pong", "Jump and Touch", "Misc."], "Music Game": ["Dance", "Instruments", "Misc."], "TTL * Sports": ["Baseball", "Horse Racing"], "Multiplay": ["Mini-Games", "Compilation", "Misc. * Mature *", "Mini-Games * Mature *", "Misc."], "TTL * Ball & Paddle": ["Breakout", "Pong"], "Medical Equipment": ["Visual Field Screener", "ECG Unit"], "TTL * Driving": ["Demolition Derby", "Race Track", "Motorbike", "Race"], "Digital Simulator": ["Aquarium"], "Printer": ["Matrix Printer", "Handbook", "Laser Printer", "3D Printer", "Thermal Printer", "Barcode Printer"], "Game": ["Gambling"], "Simulation": ["Pet Management Simulation"], "Computer Graphic Workstation": ["Broadcast Television"], "Tablet": ["Multi-Functional for Children"], "Watch": ["LCD Game"], "Touchscreen": ["Multi-Games"], "TTL * Maze": ["Shooter Small"], "TTL * Quiz": ["Questions in English"] },
+        mainCategories: ["Arcade", "Ball & Paddle", "Board Game", "Calculator", "Casino", "Climbing", "Computer", "Computer Graphic Workstation", "Digital Simulator", "Driving", "Electromechanical", "Fighter", "Game", "Game Console", "Handheld", "Maze", "Medal Game", "Medical Equipment", "Misc.", "MultiGame", "Multiplay", "Music", "Music Game", "Platform", "Printer", "Puzzle", "Quiz", "Redemption Game", "Shooter", "Simulation", "Slot Machine", "Sports", "System", "TTL * Ball & Paddle", "TTL * Driving", "TTL * Maze", "TTL * Quiz", "TTL * Shooter", "TTL * Sports", "Tablet", "Tabletop", "Telephone", "Touchscreen", "Utilities", "Watch", "Whac-A-Mole"],
+        // subCategories:['1st Person', '2.5D', '2D', '3D', '3rd Person', 'Command', 'Compilation', 'Driving', 'Driving (chase view)', 'Driving 1st Person', 'Driving Diagonal', 'Driving Horizontal', 'Driving Vertical', 'Field', 'Fighter', 'Fighter Scrolling', 'Flying', 'Flying (chase view)', 'Flying * Mature *', 'Flying 1st Person', 'Flying Diagonal', 'Flying Horizontal', 'Flying Horizontal * Mature *', 'Flying Vertical', 'Flying Vertical * Mature *', 'Gallery', 'Gallery * Mature *', 'Gun', 'Maze', 'Misc.', 'Misc. Horizontal', 'Misc. Vertical', 'Motorbike', 'Multiplay', 'Outline * Mature *', 'Pinball', 'Pinball * Mature *', 'Run Jump', 'Run Jump * Mature *', 'Run, Jump & Scrolling', 'Shooter', 'Shooter Scrolling', 'Submarine', 'Underwater', 'Versus', 'Versus * Mature *', 'Versus Co-op', 'Vertical', 'Walking'],
+        subCategories: [],
+        regions: [
+          'asia',
+          'china',
+          'germany',
+          'holland',
+          'hong kong',
+          'italy',
+          'japan',
+          'korea',
+          'spain',
+          'switzerland',
+          'taiwan'
+        ],
+        excludeGamesContaining: [
+          'prototype',
+          'bootleg',
+          'hack',
+          'playchoice-10',
+        ],
+        excludeGamesConsideredClones: [
+          "1943 Kai: Midway Kaisen",
+          "1943: Battle of Midway",
+          "1943: Midway Kaisen",
+          "Akuu Gallet",
+          "Arcana Heart",
+          "Art of Fighting - Ryuuko no Ken Gaiden",
+          "Bakutotsu Kijuutei",
+          "Bare Knuckle III / Sunset Riders",
+          "Batsugun",
+          "Battle Bakraid",
+          "Battle Garegga",
+          "Battle K-Road",
+          "Battle Tryst",
+          "Bionic Commandos",
+          "Bishoujo Senshi Sailor Moon",
+          "Black Tiger",
+          "Black Tiger / Black Dragon",
+          "Bonanza Bros",
+          "Bubble Bobble: Lost Cave V1.",
+          "Bubble Bobble: Lost Cave V1.0",
+          "Bubble Symphony",
+          "Buriki One: World Grapple Tournament '99 in Tokyo",
+          "Chou Zetsurinjin Berabowman",
+          "Chulgyeok D-Day",
+          "Cosmic Cop",
+          "Cybattler",
+          "Cyber Troopers Virtual-On",
+          "Cyberbots: Fullmetal Madness",
+          "Dan-Ku-Ga",
+          "Darius Extra Version",
+          "Darius Gaiden - Silver Hawk Extra Version",
+          "Datsugoku - Prisoners of War",
+          "Deathsmiles",
+          "DoDonPachi - Feng Bao",
+          "DoDonPachi Dai-Fukkatsu",
+          "DoDonPachi Dai-Fukkatsu Black Label",
+          "DoDonPachi Dai-Ou-Jou",
+          "DoDonPachi II - Fung Bou",
+          "Dragon Ball Z V.R.V.S.",
+          "Dragonninja",
+          "Dynamite B",
+          "Dynamite D",
+          "ESP Ra.De.",
+          "Fantasy Land",
+          "Fantasy Zone",
+          "Fatal Fury Special / Garou Densetsu Special",
+          "Fighting Fantasy",
+          "Final Crash",
+          "Fist Of The North Star",
+          "G-Darius",
+          "Galaxy Fight - Universal Warriors",
+          "Galaxy Gunners",
+          "Ghost Chaser Densei",
+          "Gouketsuji Gaiden - Saikyou Densetsu",
+          "Gundam Wing: Endless Duel",
+          "Gundam vs. Gundam",
+          "Heavy Unit -U.S.A. Version-",
+          "Jackie Chan",
+          "Jiao! Jiao! Jiao!",
+          "JoJo no Kimyou na Bouken: Mirai e no Isan",
+          "JoJo's Venture",
+          "JuJu Densetsu",
+          "Kero Kero Keroppi no Isshoni Asobou",
+          "King of Gladiator",
+          "Kizuna Encounter - Super Tag Battle / Fu'un Super Tag Battle",
+          "Knights of Valour 2 / Sanguo Zhan Ji 2 / Sangoku Senki 2",
+          "Knights of Valour / Sanguo Zhan Ji / Sangoku Senki",
+          "Kodai Ouja Kyouryuu King - Mezame yo! Arata-naru Chikara!!",
+          "MX5000",
+          "Mahou Daisakusen",
+          "Mahou Keibitai Gun Hohki",
+          "Martial Masters",
+          "Melty Blood Act Cadenza",
+          "Metal Slug 2 Turbo",
+          "Metal Slug 4 Plus",
+          "Metal Slug 5 Plus",
+          "Mobile Suit Gundam EX Revue",
+          "Moyu Zhanxian",
+          "Mushihime-Sama Futari",
+          "Mutant Warrior",
+          "NeoGeo Battle Coliseum",
+          "Omega Fighter Special",
+          "Oni - The Ninja Master",
+          "Opa Opa",
+          "Oriental Legend Special",
+          "P-47",
+          "Pae Wang Jeon Seol",
+          "Pink Sweets: Ibara Sorekara",
+          "Pistol Daimyo no Bouken",
+          "Progear no Arashi",
+          "Psyvariar",
+          "R-Shark",
+          "R-Type",
+          "Raiden Fighters 2 - Operation Hell Dive 2000",
+          "Raiden II New / Raiden DX",
+          "Real Bout Fatal Fury",
+          "SD Fighters",
+          "SD Gundam Sangokushi Rainbow",
+          "SNK vs. Capcom - SVC Chaos Plus",
+          "Saboten Bombers",
+          "Sai Yu Gou Ma Roku",
+          "Same! Same! Same!",
+          "Samurai Shodown V Special",
+          "Sanguo Qunying Chuan Zhengzong Plus",
+          "Sanguo Zhan Ji 2 Gaishi Yingxiong",
+          "Saulabi Spirits / Jin Saulabi Tu Hon",
+          "SegaSonic The Hedgehog",
+          "Senko no Rond",
+          "Shikigami no Shiro - internal build",
+          "Soul Edge Ver. II",
+          "Street Fighter EX",
+          "Street Fighter EX2",
+          "Street Fighter II' Turbo: Hyper Fighting",
+          "Street Fighter II': Champion Edition",
+          "Street Fighter II': Hyper Fighting",
+          "Street Fighter II': Magic Delta Turbo",
+          "Street Fighter II': Magic KO Turbo!! - Nightmare Crack",
+          "Street Fighter III 2nd Impact: Giant Attack",
+          "Street Fighter III: New Generation",
+          "Street Fighter Zero 2 Alpha",
+          "Street Fighter Zero 3 Upper",
+          "Street Fighter: The Movie",
+          "Street Smart / Final Fight",
+          "Super Athena",
+          "Super Bobble Bobble",
+          "Super Bubble Bobble",
+          "Super Gem Fighter: Mini Mix",
+          "Super Street Fighter II - The New Challengers",
+          "Super Street Fighter II Turbo",
+          "Super Street Fighter II: The New Challengers Super 2",
+          "Super Street Fighter II: The Tournament Battle",
+          "Teenage Mutant Ninja Turtles II: The Arcade Game",
+          "The Key Of Avalon 1",
+          "The Key Of Avalon 2",
+          "The King of Fighters '98: Ultimate Match HERO",
+          "The King of Fighters - Fuchou Zhi Lu",
+          "The King of Fighters 10th Anniversary",
+          "The King of Fighters 2002 Magic Plus",
+          "The King of Fighters 2002 Plus",
+          "The King of Fighters 2004 Plus",
+          "Trigger Heart Exelica Ver.A",
+          "Undercover Cops - Alpha Renewal Version",
+          "Vamp x1/2",
+          "Virtua Fighter 3 Team Battle",
+          "Virtua Fighter 4 Version C",
+          "Virtua Fighter 4: Evolution",
+          "Virtua Fighter Remix",
+          "Wonsido 1930's",
+          "Xain'd Sleena",
+          "Xiyou Shi E Chuan 2",
+          "Xiyou Shi E Chuan Super",
+          "crouching tiger hidden dragon",
+          "mortal kombat",
+          "tekken",
+          "unknown fighting game",
+        ],
+        //logics 
+        selectedCategories: [
+          "Arcade",
+          "Fighter",
+          "Platform",
+          "Shooter",
+        ],
+        selectedSubCategories: [
+          '2.5D',
+          '2D',
+          'Action',
+          'Adventure',
+          'Fighter',
+          'Fighter Scrolling',
+          'Flying Horizontal',
+          'Flying Vertical',
+          'Run Jump',
+          'Run, Jump & Scrolling',
+          'Shooter',
+          'Shooter Scrolling',
+          'Versus',
+          'Versus Co-op',
+          'Vertical'
+        ],
+        selectedRegions: [
+          'asia',
+          'china',
+          'germany',
+          'holland',
+          'hong kong',
+          'italy',
+          'japan',
+          'korea',
+          'spain',
+          'switzerland',
+          'taiwan'
+        ],
+        gameSettings: {
+          gameUnique: true,
+          gameGood: true,
+          gameImperfect: false,
+          gamePreliminary: false
+        },
+        selectedExcludeGamesContaining: [
+          'prototype',
+          'bootleg',
+          'hack',
+          'playchoice-10',
+        ],
+        selectedExcludeGamesConsideredClones: [
+          "1943 Kai: Midway Kaisen",
+          "1943: Battle of Midway",
+          "1943: Midway Kaisen",
+          "Akuu Gallet",
+          "Arcana Heart",
+          "Art of Fighting - Ryuuko no Ken Gaiden",
+          "Bakutotsu Kijuutei",
+          "Bare Knuckle III / Sunset Riders",
+          "Batsugun",
+          "Battle Bakraid",
+          "Battle Garegga",
+          "Battle K-Road",
+          "Battle Tryst",
+          "Bionic Commandos",
+          "Bishoujo Senshi Sailor Moon",
+          "Black Tiger",
+          "Black Tiger / Black Dragon",
+          "Bonanza Bros",
+          "Bubble Bobble: Lost Cave V1.",
+          "Bubble Bobble: Lost Cave V1.0",
+          "Bubble Symphony",
+          "Buriki One: World Grapple Tournament '99 in Tokyo",
+          "Chou Zetsurinjin Berabowman",
+          "Chulgyeok D-Day",
+          "Cosmic Cop",
+          "Cybattler",
+          "Cyber Troopers Virtual-On",
+          "Cyberbots: Fullmetal Madness",
+          "Dan-Ku-Ga",
+          "Darius Extra Version",
+          "Darius Gaiden - Silver Hawk Extra Version",
+          "Datsugoku - Prisoners of War",
+          "Deathsmiles",
+          "DoDonPachi - Feng Bao",
+          "DoDonPachi Dai-Fukkatsu",
+          "DoDonPachi Dai-Fukkatsu Black Label",
+          "DoDonPachi Dai-Ou-Jou",
+          "DoDonPachi II - Fung Bou",
+          "Dragon Ball Z V.R.V.S.",
+          "Dragonninja",
+          "Dynamite B",
+          "Dynamite D",
+          "ESP Ra.De.",
+          "Fantasy Land",
+          "Fantasy Zone",
+          "Fatal Fury Special / Garou Densetsu Special",
+          "Fighting Fantasy",
+          "Final Crash",
+          "Fist Of The North Star",
+          "G-Darius",
+          "Galaxy Fight - Universal Warriors",
+          "Galaxy Gunners",
+          "Ghost Chaser Densei",
+          "Gouketsuji Gaiden - Saikyou Densetsu",
+          "Gundam Wing: Endless Duel",
+          "Gundam vs. Gundam",
+          "Heavy Unit -U.S.A. Version-",
+          "Jackie Chan",
+          "Jiao! Jiao! Jiao!",
+          "JoJo no Kimyou na Bouken: Mirai e no Isan",
+          "JoJo's Venture",
+          "JuJu Densetsu",
+          "Kero Kero Keroppi no Isshoni Asobou",
+          "King of Gladiator",
+          "Kizuna Encounter - Super Tag Battle / Fu'un Super Tag Battle",
+          "Knights of Valour 2 / Sanguo Zhan Ji 2 / Sangoku Senki 2",
+          "Knights of Valour / Sanguo Zhan Ji / Sangoku Senki",
+          "Kodai Ouja Kyouryuu King - Mezame yo! Arata-naru Chikara!!",
+          "MX5000",
+          "Mahou Daisakusen",
+          "Mahou Keibitai Gun Hohki",
+          "Martial Masters",
+          "Melty Blood Act Cadenza",
+          "Metal Slug 2 Turbo",
+          "Metal Slug 4 Plus",
+          "Metal Slug 5 Plus",
+          "Mobile Suit Gundam EX Revue",
+          "Moyu Zhanxian",
+          "Mushihime-Sama Futari",
+          "Mutant Warrior",
+          "NeoGeo Battle Coliseum",
+          "Omega Fighter Special",
+          "Oni - The Ninja Master",
+          "Opa Opa",
+          "Oriental Legend Special",
+          "P-47",
+          "Pae Wang Jeon Seol",
+          "Pink Sweets: Ibara Sorekara",
+          "Pistol Daimyo no Bouken",
+          "Progear no Arashi",
+          "Psyvariar",
+          "R-Shark",
+          "R-Type",
+          "Raiden Fighters 2 - Operation Hell Dive 2000",
+          "Raiden II New / Raiden DX",
+          "Real Bout Fatal Fury",
+          "SD Fighters",
+          "SD Gundam Sangokushi Rainbow",
+          "SNK vs. Capcom - SVC Chaos Plus",
+          "Saboten Bombers",
+          "Sai Yu Gou Ma Roku",
+          "Same! Same! Same!",
+          "Samurai Shodown V Special",
+          "Sanguo Qunying Chuan Zhengzong Plus",
+          "Sanguo Zhan Ji 2 Gaishi Yingxiong",
+          "Saulabi Spirits / Jin Saulabi Tu Hon",
+          "SegaSonic The Hedgehog",
+          "Senko no Rond",
+          "Shikigami no Shiro - internal build",
+          "Soul Edge Ver. II",
+          "Street Fighter EX",
+          "Street Fighter EX2",
+          "Street Fighter II' Turbo: Hyper Fighting",
+          "Street Fighter II': Champion Edition",
+          "Street Fighter II': Hyper Fighting",
+          "Street Fighter II': Magic Delta Turbo",
+          "Street Fighter II': Magic KO Turbo!! - Nightmare Crack",
+          "Street Fighter III 2nd Impact: Giant Attack",
+          "Street Fighter III: New Generation",
+          "Street Fighter Zero 2 Alpha",
+          "Street Fighter Zero 3 Upper",
+          "Street Fighter: The Movie",
+          "Street Smart / Final Fight",
+          "Super Athena",
+          "Super Bobble Bobble",
+          "Super Bubble Bobble",
+          "Super Gem Fighter: Mini Mix",
+          "Super Street Fighter II - The New Challengers",
+          "Super Street Fighter II Turbo",
+          "Super Street Fighter II: The New Challengers Super 2",
+          "Super Street Fighter II: The Tournament Battle",
+          "Teenage Mutant Ninja Turtles II: The Arcade Game",
+          "The Key Of Avalon 1",
+          "The Key Of Avalon 2",
+          "The King of Fighters '98: Ultimate Match HERO",
+          "The King of Fighters - Fuchou Zhi Lu",
+          "The King of Fighters 10th Anniversary",
+          "The King of Fighters 2002 Magic Plus",
+          "The King of Fighters 2002 Plus",
+          "The King of Fighters 2004 Plus",
+          "Trigger Heart Exelica Ver.A",
+          "Undercover Cops - Alpha Renewal Version",
+          "Vamp x1/2",
+          "Virtua Fighter 3 Team Battle",
+          "Virtua Fighter 4 Version C",
+          "Virtua Fighter 4: Evolution",
+          "Virtua Fighter Remix",
+          "Wonsido 1930's",
+          "Xain'd Sleena",
+          "Xiyou Shi E Chuan 2",
+          "Xiyou Shi E Chuan Super",
+          "crouching tiger hidden dragon",
+          "mortal kombat",
+          "tekken",
+          "unknown fighting game",
+        ],
+        findSubCategory: null,
+        findClones: null
+      },
+      watch: {
+        selectedCategories: {
+          handler: function (newValue) {
+            this.updateSubCategory();
+          },
+          deep: true
+        },
+      },
+      computed: {
+        toggleCategories: {
+          get: function () {
+            return this.selectedCategories.length == this.mainCategories.length;
+          },
+          set: function (selected) {
+            const categories = [];
+
+            if (selected) {
+              this.mainCategories.forEach((item) => {
+                categories.push(item);
+              });
+            }
+
+            this.selectedCategories = categories;
+          }
+        },
+        toggleSubCategories: {
+          get: function () {
+            return this.subCategories.length == 0 ? false : this.selectedSubCategories.length == this.subCategories.length;
+          },
+          set: function (selected) {
+            const subCategories = [];
+
+            if (selected) {
+              this.subCategories.forEach((item) => {
+                subCategories.push(item);
+              });
+            }
+
+            this.selectedSubCategories = subCategories;
+          }
+        },
+        toggleRegions: {
+          get: function () {
+            return this.selectedRegions.length == this.regions.length;
+          },
+          set: function (selected) {
+            const regions = [];
+
+            if (selected) {
+              this.regions.forEach((item) => {
+                regions.push(item);
+              });
+            }
+
+            this.selectedRegions = regions;
+          }
+        },
+        toggleGameClones: {
+          get: function () {
+            return this.selectedExcludeGamesConsideredClones.length == this.excludeGamesConsideredClones.length;
+          },
+          set: function (selected) {
+            const excludeGamesConsideredClones = [];
+
+            if (selected) {
+              this.excludeGamesConsideredClones.forEach((item) => {
+                excludeGamesConsideredClones.push(item);
+              });
+            }
+
+            this.selectedExcludeGamesConsideredClones = excludeGamesConsideredClones;
+          }
+        },
+      },
+      methods: {
+        async filterRames () {
+          this.loading = true;
+          const emulator = localStorage.getItem('emulator');
+          try {
+            const data = await $.ajax({
+              url: '/filter-mame',
+              type: 'POST',
+              data: {
+                emulator: emulator,
+                categories: this.selectedCategories,
+                subCategories: this.selectedSubCategories,
+                gameSettings: this.gameSettings,
+                regions: this.selectedRegions,
+                gameExtra: this.selectedExcludeGamesContaining,
+                gameClones: this.selectedExcludeGamesConsideredClones
+              }
+            });
+
+            console.log(data);
+            this.loading = false;
+          } catch (error) {
+            this.loading = false;
+            console.log(error)
+          }
+        },
+        updateSubCategory () {
+          let subCats = [];
+
+          this.selectedCategories.forEach((item) => {
+            subCats = subCats.concat(this.categoriesMap[item]);
+          });
+
+          // unique
+          subCats = [...new Set(subCats)];
+          subCats.sort();
+          this.subCategories = [...subCats];
+
+          // keep only those that are available
+          this.selectedSubCategories = [...this.selectedSubCategories.filter(v => this.subCategories.includes(v))];
+        },
+      },
+      mounted () {
+        this.updateSubCategory();
+      }
     });
   </script>
 </body>

@@ -6,6 +6,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "node index.js",
+    "devs": "node index.js --no-open",
     "pkg": "pkg package.json -t node14-win-x64 --out-path dist/",
     "css-generate": "npx tailwindcss -i public/css/tailwind.css -o public/css/style.css",
     "css": "npx tailwindcss -i public/css/tailwind.css -o public/css/style.css --watch"
@@ -27,7 +28,8 @@
     "open": "^8.4.0",
     "path": "^0.12.7",
     "portfinder": "^1.0.32",
-    "tailwindcss": "^3.1.8"
+    "tailwindcss": "^3.1.8",
+    "xml-js": "^1.6.11"
   },
   "devDependencies": {
     "eslint": "^8.18.0",

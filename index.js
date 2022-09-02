@@ -10,7 +10,7 @@ const { argv } = require('process');
 let bodyParser = require('body-parser');
 
 // include scripts
-const { CheckFiles, } = require('./events/index.js');
+const { CheckFiles, FilterMame} = require('./events/index.js');
 
 // creat app
 const app = Express();
@@ -50,6 +50,11 @@ app.post('/upload-file', function (req, res) {
 
     res.send(fileName);
   });
+});
+
+app.post('/filter-mame', function (req, res) {
+  const data = FilterMame(req.body, __dirname);
+  res.send(data);
 });
 
 app.get('/exit', function (req, res) {

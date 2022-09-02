@@ -13,7 +13,7 @@
 
 <body>
 
-  <div class="mx-auto py-2 -px-2 px-2 h-screen flex flex-col justify-between">
+  <div class="mx-auto py-2 -px-2 px-2 h-screen flex flex-col justify-between" id="app">
 
     <div class="w-full overflow-auto max-h-screen">
       <div class="py-2 text-2xl font-semibold">
@@ -21,53 +21,46 @@
       </div>
 
       <div class="w-full border-2">
-        <div class="flex">
-          <input id="emu-1" type="radio" value="mame" name="emu" class="hidden">
-          <label for="emu-1" class="chooseRadio w-full bg-gray-50 px-4 py-3 cursor-pointer">
-            Mame
-          </label>
-        </div>
-        <div class="flex">
-          <input id="emu-2" type="radio" value="fbneo" name="emu" class="hidden">
-          <label for="emu-2" class="chooseRadio w-full bg-gray-50 px-4 py-3 cursor-pointer">
-            FB Neo
+        <div class="flex" v-for="(emu, index) in emulators" :key="index">
+          <input :id="'emu-'+index" type="radio" v-model="emulator" :value="emu.value" class="hidden">
+          <label :for="'emu-'+index" :class="[emulator == emu.value ? 'bg-blue-600' : 'bg-gray-50']"
+            class="w-full px-4 py-3 cursor-pointer">
+            {{emu.name}}
           </label>
         </div>
       </div>
 
-      <!-- success -->
-      <div class="hidden w-full mt-4 p-2 text-sm font-semibold bg-green-600 text-white" id="continue">
-        All files are in place<br>
-        Continue to next step!
-      </div>
-
-      <!-- error -->
-      <div class="hidden w-full mt-4 p-2 text-sm font-semibold bg-yellow-600 text-white" id="selectFiles">
+      <!-- success/error messages-->
+      <div :class=" [isSuccess ? 'bg-green-600' : 'bg-yellow-600' ]"
+        class="w-full mt-4 p-2 text-sm font-semibold text-white" v-if="messages.length">
+        <div v-for="msg in messages">{{msg}}</div>
       </div>
 
       <!-- select file for mame -->
-      <div class="hidden w-full mt-2 nextOption mame">
+      <div class="w-full mt-2" v-if="emulator == 'mame'">
         <div class="py-2 text-2xl font-semibold">
           Select .XML/.DAT and .INI files
         </div>
         <div class="text-sm">
-          Can be XML downloaded from 
+          Can be XML downloaded from
           <a class="text-blue-700 font-semibold" href="https://www.mamedev.org/release.html" target="_blank">
             here
           </a>
           <br />
-          Can be INI downloaded from 
-          <a class="text-blue-700 font-semibold" href="https://raw.githubusercontent.com/mamesupport/catver.ini/master/catver.ini" target="_blank">
+          Can be INI downloaded from
+          <a class="text-blue-700 font-semibold"
+            href="https://raw.githubusercontent.com/mamesupport/catver.ini/master/catver.ini" target="_blank">
             here
           </a>
-           or 
-           <a class="text-blue-700 font-semibold" href="https://emulationrealm.net/downloads/file/2831-catlist-catver" target="_blank">
-             here
-           </a>
+          or
+          <a class="text-blue-700 font-semibold" href="https://emulationrealm.net/downloads/file/2831-catlist-catver"
+            target="_blank">
+            here
+          </a>
         </div>
         <div class="w-full border-2 px-2 py-3">
           <div class="flex">
-            <input class="uploadFile hidden" type="file" id="mame_xml" accept=".xml,.dat">
+            <input class="hidden" type="file" @change="uploadMameXML" id="mame_xml" accept=".xml,.dat">
             <label class="cursor-pointer bg-blue-700 text-white flex items-center justify-center w-48 text-center"
               for="mame_xml">
               Choose .XML/.DAT
@@ -79,7 +72,7 @@
             </div>
           </div>
           <div class="flex mt-1">
-            <input class="uploadFile hidden" type="file" id="mame_ini" accept=".ini">
+            <input class="hidden" type="file" @change="uploadMameINI" id="mame_ini" accept=".ini">
             <label class="cursor-pointer bg-blue-700 text-white flex items-center justify-center w-48 text-center"
               for="mame_ini">
               Choose catver.ini
@@ -94,19 +87,21 @@
       </div>
 
       <!-- select file for fbneo -->
-      <div class="hidden w-full mt-2 nextOption fbneo">
+      <div class="w-full mt-2" v-if="emulator == 'fbneo'">
         <div class="py-2 text-2xl font-semibold">
           Select .XML/.DAT file
         </div>
         <div class="text-sm">
-          Can be XML downloaded from 
-          <a class="text-blue-700 font-semibold" href=https://github.com/libretro/FBNeo/blob/master/dats/FinalBurn%20Neo%20(ClrMame%20Pro%20XML%2C%20Arcade%20only).dat" target="_blank">
+          Can be XML downloaded from
+          <a class="text-blue-700 font-semibold"
+            href=https://github.com/libretro/FBNeo/blob/master/dats/FinalBurn%20Neo%20(ClrMame%20Pro%20XML%2C%20Arcade%20only).dat"
+            target="_blank">
             here
           </a>
         </div>
         <div class="w-full border-2 px-2 py-3">
           <div class="flex">
-            <input class="uploadFile hidden" type="file" id="fbneo_xml" accept=".xml,.dat">
+            <input class="hidden" type="file" @change="uploadFBneoXML" id="fbneo_xml" accept=".xml,.dat">
             <label class="cursor-pointer bg-blue-700 text-white flex items-center justify-center w-48" for="fbneo_xml">
               Choose .XML/.DAT
             </label>
@@ -124,11 +119,10 @@
 
 
     <!-- continue to next step -->
-    <div class="flex pt-4 justify-between">
-      <button class="bg-slate-500 px-4 py-2 text-white rounded-md" onclick="exitApp()">
-        Exit
-      </button>
-      <button class="bg-green-600 px-4 py-2 text-white rounded-md mr-4" onclick="setEmulator()">
+    <div class="flex pt-4 justify-end">
+      <button :disabled="!isSuccess"
+        class="bg-green-600 px-4 py-2 text-white rounded-md mr-4 disabled:bg-gray-200 disabled:text-black disabled:cursor-not-allowed"
+        @click="setEmulator()">
         Continue
       </button>
     </div>
@@ -137,8 +131,150 @@
 
 
   <script src="/js/jquery.min.js"></script>
-  <script src="/global.js"></script>
-  <script src="/index.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script>
+    new Vue({
+      el: "#app",
+      data: {
+        emulators: [
+          { name: 'Mame (non-merged)', value: 'mame' },
+          { name: 'FB Neo', value: 'fbneo' },
+        ],
+        emulator: null,
+        defaultMessages: [
+          'All files are in place',
+          'Continue to next step!'
+        ],
+        isSuccess: false,
+        messages: [],
+      },
+      watch: {
+        emulator () {
+          this.checkFiles();
+        }
+      },
+      methods: {
+        setEmulator () {
+          this.messages = [];
+          if (!this.emulator) {
+            this.messages = ["Please select an emulator!"];
+            return false;
+          }
+
+          localStorage.setItem('emulator', this.emulator);
+
+          // next page
+          location.href = `/filter-${this.emulator}-roms.html`;
+        },
+        async checkFiles () {
+          this.messages = [];
+          const missingFiles = await $.ajax({
+            url: '/checkFile',
+            type: 'POST',
+            data: {
+              emulator: this.emulator
+            }
+          });
+
+          if (missingFiles.length > 0) {
+            this.messages = ['Files are not uploaded.'].concat(missingFiles);
+            this.isSuccess = false;
+          } else {
+            this.messages = this.defaultMessages;
+            this.isSuccess = true;
+          }
+        },
+        uploadMameXML (event) {
+          if (event.target.files.length == 0) {
+            return false;
+          }
+          const file = event.target.files[0];
+          const upload = new Upload(file, this.emulator, 'mame_xml');
+
+          // execute upload
+          upload.doUpload();
+        },
+        uploadMameINI (event) {
+          if (event.target.files.length == 0) {
+            return false;
+          }
+          const file = event.target.files[0];
+          const upload = new Upload(file, this.emulator, 'mame_ini');
+
+          // execute upload
+          upload.doUpload();
+        },
+        uploadFBneoXML (event) {
+          if (event.target.files.length == 0) {
+            return false;
+          }
+          const file = event.target.files[0];
+          const upload = new Upload(file, this.emulator, 'fbneo_xml');
+
+          // execute upload
+          upload.doUpload();
+        },
+      }
+    });
+
+    const Upload = function (file, emulator, progress_bar_id) {
+      this.file = file;
+      this.emulator = emulator;
+      this.progress_bar_id = `#${progress_bar_id}-progress`;
+    };
+
+    Upload.prototype.getType = function () {
+      return this.file.type;
+    };
+    Upload.prototype.getSize = function () {
+      return this.file.size;
+    };
+    Upload.prototype.getName = function () {
+      return this.file.name;
+    };
+    Upload.prototype.doUpload = function () {
+      const that = this;
+      const formData = new FormData();
+
+      // add assoc key values, this will be posts values
+      formData.append("file", this.file, this.getName());
+      formData.append("emulator", this.emulator);
+
+      $.ajax({
+        type: "POST",
+        url: "/upload-file",
+        xhr: function () {
+          const myXhr = $.ajaxSettings.xhr();
+          if (myXhr.upload) {
+            myXhr.upload.addEventListener('progress', (event) => {
+              let percent = 0;
+              const position = event.loaded || event.position;
+              const total = event.total;
+              if (event.lengthComputable) {
+                percent = Math.ceil(position / total * 100);
+              }
+              // update progressbars classes so it fits your code
+              $(`${that.progress_bar_id} .progress-bar`).css("width", +percent + "%");
+              $(`${that.progress_bar_id} .status`).text(percent + "%");
+            }, false);
+          }
+          return myXhr;
+        },
+        success: function (data) {
+          // your callback here
+        },
+        error: function (error) {
+          // handle error
+        },
+        async: true,
+        data: formData,
+        cache: false,
+        contentType: false,
+        processData: false,
+        timeout: 60000
+      });
+    };
+  </script>
 </body>
 
 </html>

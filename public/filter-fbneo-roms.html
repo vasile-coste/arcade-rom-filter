@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
+  <title>
+    Arcade rom filter
+  </title>
+  <link href="/css/style.css" rel="stylesheet" type="text/css" />
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+</head>
+
+<body>
+
+  <div class="mx-auto py-2 -px-2 px-2 h-screen flex flex-col justify-between" id="app">
+
+    <div class="w-full overflow-auto max-h-screen">
+      <div class="py-1 text-2xl font-semibold">
+        Filter FB Neo roms
+      </div>
+      Work in progress...
+
+    </div>
+
+
+    <!-- continue to next step -->
+    <div class="flex pt-4 justify-between">
+      <a href="/" class="bg-slate-500 px-4 py-2 text-white rounded-md">
+        Back
+      </a>
+      <button class="bg-green-600 px-4 py-2 text-white rounded-md mr-4">
+        Filter roms
+      </button>
+    </div>
+
+  </div>
+
+
+  <script src="/js/jquery.min.js"></script>
+  <script src="/filter-fbneo-roms.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script>
+    new Vue({
+      el: "#app",
+      data: {},
+      watch: {},
+      computed: {},
+      methods: {},
+      mounted() {},
+    });
+  </script>
+</body>
+
+</html>
