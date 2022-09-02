@@ -7,7 +7,7 @@ module.exports = function (data, path) {
   const finalRoms = excludeRoms(data.regions, data.gameExtra, data.gameClones);
 
   //
-  // createFile(romsFromXML, path);
+  createFile(romsFromXML, path);
 
   return finalRoms;
 };
@@ -61,7 +61,7 @@ function getRomDataFromXMLAndFilter (emulator, path, romsWithCategory, gameSetti
     const xmlData = fs.readFileSync(file, 'utf8');
 
     console.log('Converting to json ...');
-    const jsonData = JSON.parse(convert.xml2json(xmlData, { compact: true, spaces: 4 }));
+    const jsonData = convert.xml2js(xmlData, { compact: true, spaces: 4 });
 
     console.log('Mapping roms to their category/subcategory.');
     const romsMapped = [];
@@ -142,7 +142,7 @@ function createFile (data, path) {
 
   // let unique = [...new Set(data)];
   // unique.sort();
-  
+
   if (fs.existsSync(path + '/zzz.json')) {
     console.log('Delete old dump file');
     fs.unlinkSync(path + '/zzz.json');
