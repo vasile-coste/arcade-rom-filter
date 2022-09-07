@@ -675,18 +675,6 @@ video {
   height: 100vh;
 }
 
-.h-52 {
-  height: 13rem;
-}
-
-.h-36 {
-  height: 9rem;
-}
-
-.h-1\/2 {
-  height: 50%;
-}
-
 .h-56 {
   height: 14rem;
 }
@@ -709,14 +697,6 @@ video {
 
 .w-48 {
   width: 12rem;
-}
-
-.flex-none {
-  flex: none;
-}
-
-.grow {
-  flex-grow: 1;
 }
 
 .transform {
@@ -783,6 +763,11 @@ video {
   border-width: 1px;
 }
 
+.bg-gray-50 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(249 250 251 / var(--tw-bg-opacity));
+}
+
 .bg-slate-500 {
   --tw-bg-opacity: 1;
   background-color: rgb(100 116 139 / var(--tw-bg-opacity));
@@ -798,11 +783,6 @@ video {
   background-color: rgb(37 99 235 / var(--tw-bg-opacity));
 }
 
-.bg-gray-50 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(249 250 251 / var(--tw-bg-opacity));
-}
-
 .bg-yellow-600 {
   --tw-bg-opacity: 1;
   background-color: rgb(202 138 4 / var(--tw-bg-opacity));
@@ -811,21 +791,6 @@ video {
 .bg-blue-700 {
   --tw-bg-opacity: 1;
   background-color: rgb(29 78 216 / var(--tw-bg-opacity));
-}
-
-.bg-gray-200 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(229 231 235 / var(--tw-bg-opacity));
-}
-
-.bg-gray-100 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(243 244 246 / var(--tw-bg-opacity));
-}
-
-.bg-yellow-200 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(254 240 138 / var(--tw-bg-opacity));
 }
 
 .p-1 {
@@ -889,11 +854,6 @@ video {
   line-height: 1.25rem;
 }
 
-.text-xs {
-  font-size: 0.75rem;
-  line-height: 1rem;
-}
-
 .font-semibold {
   font-weight: 600;
 }
@@ -919,11 +879,6 @@ video {
 .text-gray-700 {
   --tw-text-opacity: 1;
   color: rgb(55 65 81 / var(--tw-text-opacity));
-}
-
-.text-green-600 {
-  --tw-text-opacity: 1;
-  color: rgb(22 163 74 / var(--tw-text-opacity));
 }
 
 .underline {
@@ -983,6 +938,40 @@ video {
   position: absolute;
   display: inline-block;
   color: #ffffff;
+}
+
+/** Custom Scroll bar */
+
+/* width */
+
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+/* Track */
+
+::-webkit-scrollbar-track {
+  background: #ebebeb;
+}
+
+/* Handle */
+
+::-webkit-scrollbar-thumb {
+  background: rgb(184, 184, 184);
+}
+
+/* Handle on hover */
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(184, 184, 184);
+}
+
+/** Scroll bar for mozilla */
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(184, 184, 184) #ebebeb;
 }
 
 .hover\:bg-gray-200:hover {

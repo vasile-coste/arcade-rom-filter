@@ -28,3 +28,31 @@
   display: inline-block;
   color: #ffffff;
 }
+
+/** Custom Scroll bar */
+/* width */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #ebebeb;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: rgb(184, 184, 184);
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(184, 184, 184);
+}
+
+/** Scroll bar for mozilla */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(184, 184, 184) #ebebeb;
+}
