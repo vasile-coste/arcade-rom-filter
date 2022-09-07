@@ -1,6 +1,5 @@
 node_modules/
 dist/
-mame.ini
-mame.xml
-fbneo.xml
-zzz.json
+*.ini
+*.xml
+*-roms-to-copy.json

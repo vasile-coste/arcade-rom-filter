@@ -6,16 +6,18 @@ const path = require('path');
 const opn = require('open');
 const pf = require('portfinder');
 const { argv } = require('process');
+const { WebSocketServer } = require('ws');
 
 let bodyParser = require('body-parser');
 
 // include scripts
-const { CheckFiles, FilterMame} = require('./events/index.js');
+const { CheckFiles, FilterMame } = require('./events/index.js');
 
 // creat app
 const app = Express();
 
 const server = http.createServer(app);
+const wsServer = new WebSocketServer({ server });
 
 app.use(fileUpload());
 app.use(bodyParser.json());       // to support JSON-encoded bodies
@@ -50,15 +52,6 @@ app.post('/upload-file', function (req, res) {
 
     res.send(fileName);
   });
-});
-
-app.post('/filter-mame', function (req, res) {
-  const data = FilterMame(req.body, __dirname);
-  res.send(data);
-});
-
-app.get('/exit', function (req, res) {
-  process.kill(process.pid, 'SIGTERM');
 });
 
 const open = async (PORT) => {
@@ -111,3 +104,21 @@ process.on('unhandledRejection', (reason) => {
 });
 
 process.on('SIGTERM', () => cleanExit(server));
+
+
+wsServer.on('connection', (ws) => {
+  ws.on('message', async (msg) => {
+    /** @type {Record<string, any>} */
+    const message = JSON.parse(msg);
+
+    // Theres no file handler, soo...
+
+    switch (message.event) {
+      case 'filterMame':
+        await FilterMame(message.data, path.join(__dirname), ws);;
+        break;
+      case 'exit':
+        process.kill(process.pid, 'SIGTERM');
+    }
+  });
+});
