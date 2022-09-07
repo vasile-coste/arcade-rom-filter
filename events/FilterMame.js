@@ -227,7 +227,7 @@ function romMapperM (rom, romsWithCategory, gameSettings, extraSettings, extraFi
     return false;
   }
 
-  if (rom._attributes.cloneof && gameSettings.gameUnique == 'true') {
+  if (rom._attributes.cloneof && gameSettings.gameClones == 'true') {
     console.log(`ROM ${rom._attributes.name} with name ${rom.description._text} was skipped because it is a clone of ${rom._attributes.cloneof}`);
     return false;
   }
@@ -247,9 +247,11 @@ function romMapperM (rom, romsWithCategory, gameSettings, extraSettings, extraFi
         (extraFilters.length > 0 && !extraFilters.includes(rom.description._text.toLowerCase()))
       ) {
         console.log(`ROM ${rom._attributes.name} with name ${rom.description._text} was added!`);
+        const groupArr = rom.description._text.split('(');
         return {
           rom: rom._attributes.name + '.zip',
           name: rom.description._text,
+          group: groupArr[0].trim(),
           category: romCat,
           year: rom.year._text,
           manufacturer: rom.manufacturer._text,

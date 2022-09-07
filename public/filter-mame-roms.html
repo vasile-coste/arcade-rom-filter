@@ -43,7 +43,7 @@
               <input type="checkbox" v-model="toggleCategories" id="toggle-categories">
               <label class="cursor-pointer" for="toggle-categories">Toggle All</label>
             </div>
-            <div class="w-full h-52 my-2 overflow-y-auto">
+            <div class="w-full h-56 my-2 overflow-y-auto">
               <div class="w-full hover:bg-gray-200 px-1" v-for="(item, cnt) in mainCategories">
                 <input type="checkbox" v-model="selectedCategories" :value="item" :id="'cat-' + cnt">
                 <label class="cursor-pointer" :for="'cat-'+cnt">{{item}}</label>
@@ -63,7 +63,7 @@
                 <input class="w-full border-2 rounded-md" type="text" v-model="findSubCategory" placeholder="Find...">
               </div>
             </div>
-            <div class="w-full h-52 my-2 overflow-y-auto">
+            <div class="w-full h-56 my-2 overflow-y-auto">
               <div :class="{'hidden' : findSubCategory && !item.toLowerCase().includes(findSubCategory.toLowerCase()) }"
                 class="w-full hover:bg-gray-200 px-1" v-for="(item, cnt) in subCategories">
                 <input type="checkbox" v-model="selectedSubCategories" :value="item" :id="'subcat-' + cnt">
@@ -75,10 +75,10 @@
           <div class="w-full border-2 p-1">
             <div class="text-lg font-semibold">Games Settings</div>
             <div class="italic text-sm">check/uncheck want you need</div>
-            <div class="w-full h-52 my-2 overflow-y-auto">
+            <div class="w-full h-56 my-2 overflow-y-auto">
               <div class="w-full hover:bg-gray-200 px-1">
-                <input type="checkbox" v-model="gameSettings.gameUnique" id="game-unique">
-                <label for="game-unique">Keep unique only</label>
+                <input type="checkbox" v-model="gameSettings.gameClones" id="game-gameClones">
+                <label for="game-gameClones">Remove Clones</label>
               </div>
               <div class="w-full hover:bg-gray-200 px-1">
                 <input type="checkbox" v-model="gameSettings.gameGood" id="game-good">
@@ -95,10 +95,10 @@
             </div>
           </div>
           <!-- extra game settings -->
-          <div class="w-full border-2 p-1" v-if="gameSettings.gameUnique">
+          <div class="w-full border-2 p-1">
             <div class="text-lg font-semibold">Extra Settings</div>
             <div class="italic text-sm">check/uncheck want you need</div>
-            <div class="w-full h-52 my-2 overflow-y-auto">
+            <div class="w-full h-56 my-2 overflow-y-auto">
               <div class="w-full hover:bg-gray-200 px-1" v-for="(item, cnt) in excludeGamesContaining">
                 <input type="checkbox" v-model="selectedExtraSettings" :value="item" :id="'extragame-' + cnt">
                 <label class="cursor-pointer" :for="'extragame-'+cnt">Exclude roms manufacturer with {{item}}</label>
@@ -116,7 +116,7 @@
               <input type="checkbox" v-model="toggleRegions" id="toggle-regions">
               <label class="cursor-pointer" for="toggle-regions">Toggle All</label>
             </div>
-            <div class="w-full h-36 my-2 overflow-y-auto">
+            <div class="w-full h-56 my-2 overflow-y-auto">
               <div class="w-full hover:bg-gray-200 px-1" v-for="(item, cnt) in regions">
                 <input type="checkbox" v-model="selectedRegions" :value="item" :id="'regions-' + cnt">
                 <label class="cursor-pointer" :for="'regions-'+cnt">{{item}}</label>
@@ -139,7 +139,7 @@
                 <input class="w-full border-2 rounded-md" type="text" v-model="findClones" placeholder="Find...">
               </div>
             </div>
-            <div class="grid grid-cols-3 h-36 my-2 overflow-y-auto">
+            <div class="grid grid-cols-3 h-56 my-2 overflow-y-auto">
               <div :class="{'hidden' : findClones && !item.toLowerCase().includes(findClones.toLowerCase()) }"
                 class="w-full hover:bg-gray-200 px-1" v-for="(item, cnt) in extraFilters">
                 <input type="checkbox" v-model="selectedExtraFilters" :value="item" :id="'gameclone-' + cnt">
@@ -290,7 +290,7 @@
             categories: this.selectedCategories,
             subCategories: this.selectedSubCategories,
             gameSettings: this.gameSettings,
-            extraSettings: this.gameSettings.gameUnique ? this.selectedExtraSettings : [],
+            extraSettings: this.selectedExtraSettings,
             extraFilters: this.selectedExtraFilters,
             excludeRegions: this.selectedRegions
           }

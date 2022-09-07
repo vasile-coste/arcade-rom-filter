@@ -220,7 +220,7 @@ function mameSettings () {
       'taiwan'
     ],
     gameSettings: prevData ? prevData.gameSettings : {
-      gameUnique: true,
+      gameClones: true,
       gameGood: true,
       gameImperfect: false,
       gamePreliminary: false
