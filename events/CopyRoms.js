@@ -67,7 +67,7 @@ module.exports = function (emulator, webSocket) {
   // create a folder for destination roms
   fs.mkdirSync(destionationFolder);
 
-  copyRoms(file, romFolder, destionationFolder);
+  copyRoms(file, romFolder, destionationFolder, webSocket);
 
   console.log(`Finished!`);
   webSocket.send(
@@ -82,7 +82,7 @@ module.exports = function (emulator, webSocket) {
   sendCompletedSignal(webSocket);
 };
 
-function copyRoms (file, romFolder, destionationFolder) {
+function copyRoms (file, romFolder, destionationFolder, webSocket) {
   const jsonObj = JSON.parse(fs.readFileSync(file, 'utf8'));
 
   jsonObj.forEach(element => {
