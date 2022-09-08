@@ -15,8 +15,9 @@ function createFile (path, emulator, data) {
 
 function getFilesize (filename) {
   const stats = fs.statSync(filename);
-  const fileSizeInMegabytes = stats.size / (1024 * 1024)
-  return fileSizeInMegabytes + 'MB';
+  const fileSizeInMegabytes = stats.size / (1024 * 1024);
+  const rounded = Math.round((fileSizeInMegabytes + Number.EPSILON) * 100) / 100;
+  return rounded + 'MB';
 }
 
 module.exports = { createFile, getFilesize };

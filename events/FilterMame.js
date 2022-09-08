@@ -204,7 +204,7 @@ function getRomDataFromXMLAndFilter (webSocket, emulator, path, romsWithCategory
         })
       );
 
-      jsonData.mame.machine.forEach(rom => {
+      jsonData.datafile.machine.forEach(rom => {
         const tmp = romMapperD(rom, romsWithCategory, gameSettings, extraSettings, extraFilters);
         if (tmp !== false) {
           romsMapped.push(tmp);
@@ -242,7 +242,7 @@ function romMapperM (rom, romsWithCategory, gameSettings, extraSettings, extraFi
     return false;
   }
 
-  if (rom._attributes.cloneof && gameSettings.gameClones == 'true') {
+  if (rom._attributes.cloneof && gameSettings.gameClones) {
     console.log(`ROM ${rom._attributes.name} with name ${rom.description._text} was skipped because it is a clone of ${rom._attributes.cloneof}`);
     return false;
   }
@@ -289,16 +289,58 @@ function romMapperM (rom, romsWithCategory, gameSettings, extraSettings, extraFi
 }
 
 function romMapperD (rom, romsWithCategory, gameSettings, extraSettings, extraFilters) {
-  webSocket.send(
-    JSON.stringify({
-      event: 'log',
-      newLine: true,
-      message: `TODO: romMapperD work in progress.`
-    })
-  );
-  // TODO
+  const romCat = romsWithCategory.find(v => v.rom == rom._attributes.name);
+  if (!romCat) {
+    console.log(`ROM ${rom._attributes.name} with name ${rom.description._text} was skipped because is excluded from main category/subcategory`);
+    return false;
+  }
+
+  // this cannot be done
+  // gameSettings.gameClones
+
+  // check rom status
+  const romStatus = rom.rom.length > 0 ? rom.rom.filter(r => r._attributes.status && r._attributes.status == 'baddump') : [];
+
+  if (
+    (romStatus.length == 0 && gameSettings.gameGood) ||
+    (romStatus.length > 0 && gameSettings.gameImperfect || gameSettings.gamePreliminary) ||
+    (!gameSettings.gameGood && !gameSettings.gameImperfect && !gameSettings.gamePreliminary)
+  ) {
+    const checkExtraSettings = extraSettings.filter(filter => rom.manufacturer._text.toLowerCase().includes(filter));
+    if (
+      extraSettings.length == 0 ||
+      (extraSettings.length > 0 && checkExtraSettings.length == 0)
+    ) {
+      const checkExtraFilters = extraFilters.filter(filter => rom.description._text.toLowerCase().includes(filter));
+      if (
+        extraFilters.length == 0 ||
+        (extraFilters.length > 0 && checkExtraFilters.length == 0)
+      ) {
+        console.log(`ROM ${rom._attributes.name} with name ${rom.description._text} was added!`);
+        const groupArr = rom.description._text.split('(');
+        return {
+          rom: rom._attributes.name + '.zip',
+          name: rom.description._text,
+          group: groupArr[0].trim(),
+          category: romCat,
+          year: rom.year._text,
+          manufacturer: rom.manufacturer._text,
+          status: romStatus.length == 0 ? 'good' : 'imperfect|preliminary'
+        };
+      } else {
+        console.log(`ROM ${rom._attributes.name} with name ${rom.description._text} was skipped because it was excluded in 'Extra Filters' from UI`);
+        return false;
+      }
+    } else {
+      console.log(`ROM ${rom._attributes.name} with name ${rom.description._text} was skipped because manufacturer ${rom.manufacturer._text} was excluded in 'Extra Settings' from UI`);
+      return false;
+    }
+  }
+
+  console.log(`ROM ${rom._attributes.name} with name ${rom.description._text} was skipped because rom status=${romStatus.length == 0 ? 'good' : 'imperfect|preliminary'}`);
   return false;
 }
+
 
 function excludeRomsRegions (webSocket, romsFromXML, excludeRegions, gameDuplicates) {
   let roms = [];
