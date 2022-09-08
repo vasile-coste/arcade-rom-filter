@@ -2,13 +2,21 @@
 I'm currenly doing this in my free time
 
 # Arcade rom filter
-This is an app that filters roms from MAME or FB Neo
+This is an app that filters roms from:
+- MAME 
+- FB Neo (in progress)
+- with time maybe others?
 
-## Usage
-- add exe file you workspace
-- the workspace must have you rom folder called <b>roms</b>
+## Required
+If you plan to use it from source, you'll also require [Node.js >= 16](https://nodejs.org/).
+
+## How to use
+Download the latest executable from [here](https://github.com/releases/latest).
+- copy the file into your workspace
+- the workspace must have your rom folder called <b>roms</b>
 - run exe file
 - a browser window will open 
-- run the steps from the browser window
+- go through the steps from the browser window
 
-
+## For developers
+For developers, see [this](https://github.com/DEVELOPERS.md)
