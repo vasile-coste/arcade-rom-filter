@@ -1,26 +1,34 @@
 const fs = require("fs");
+const path = require('path');
 const convert = require('xml-js');
 const { createFile, getFilesize } = require('./File.js');
 
-module.exports = function (data, path, webSocket) {
+module.exports = function (data, webSocket) {
+  const dir = path.resolve('./');
 
   const romsWithCategory = getRomCategoriesFromIniAndFilter(
     webSocket,
     data.emulator,
-    path,
+    dir,
     data.categories.map(string => string.toLowerCase()),
     data.subCategories.map(string => string.toLowerCase())
   );
+  if(romsWithCategory.length == 0) {
+    return false;
+  }
 
   const romsFromXML = getRomDataFromXMLAndFilter(
     webSocket,
     data.emulator,
-    path,
+    dir,
     romsWithCategory,
     data.gameSettings,
     data.extraSettings.map(string => string.toLowerCase()),
     data.extraFilters.map(string => string.toLowerCase())
   );
+  if(romsFromXML.length == 0) {
+    return false;
+  }
 
   const finalRoms = excludeRomsRegions(
     webSocket,
@@ -28,9 +36,12 @@ module.exports = function (data, path, webSocket) {
     data.excludeRegions.map(string => string.toLowerCase()),
     data.gameSettings.gameDuplicates
   );
+  if(finalRoms.length == 0) {
+    return false;
+  }
 
   // create a file
-  createFile(path, data.emulator, finalRoms);
+  createFile(dir, data.emulator, finalRoms);
 
   webSocket.send(
     JSON.stringify({

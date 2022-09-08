@@ -3,6 +3,9 @@ const WS_URI = `${window?.location?.protocol === 'https:' ? 'wss' : 'ws'}://${wi
 const ws = new WebSocket(WS_URI);
 
 ws.onmessage = (ev) => {
+  const changeFilters = document.getElementById('changeFilters');
+  const saveFilteredRoms = document.getElementById('saveFilteredRoms');
+
   const msg = JSON.parse(ev.data);
   switch (msg.event) {
     case 'log':
@@ -22,15 +25,13 @@ ws.onmessage = (ev) => {
       break;
     case 'next':
       // show next step
-      const saveFilteredRoms = document.getElementById('saveFilteredRoms');
       saveFilteredRoms.classList.remove("hidden");
-      const changeFilters = document.getElementById('changeFilters');
       changeFilters.classList.remove("hidden");
       break;
     case 'finish':
       // hide button for re-run
-      const elem = document.getElementById('saveFilteredRoms');
-      elem.classList.add("hidden");
+      saveFilteredRoms.classList.add("hidden");
+      changeFilters.classList.remove("hidden");
       break;
     default:
       console.log('untreated event', msg);

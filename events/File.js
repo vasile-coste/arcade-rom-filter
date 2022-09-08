@@ -12,7 +12,6 @@ function createFile (path, emulator, data) {
   });
 };
 
-
 function getFilesize (filename) {
   const stats = fs.statSync(filename);
   const fileSizeInMegabytes = stats.size / (1024 * 1024);

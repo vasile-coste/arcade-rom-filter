@@ -25,7 +25,8 @@
         <button class="hidden bg-gray-600 px-4 py-2 text-white rounded-md" id="changeFilters" @click="changeFilters">
           Change filters
         </button>
-        <button class="hidden bg-green-600 px-4 py-2 text-white rounded-md" id="saveFilteredRoms" @click="saveFilteredRoms">
+        <button class="hidden bg-green-600 px-4 py-2 text-white rounded-md" id="saveFilteredRoms"
+          @click="saveFilteredRoms">
           Save filtered roms
         </button>
       </div>
@@ -119,7 +120,7 @@
           <!-- Exclude Region -->
           <div class="w-80 border-2 p-1">
             <div class="text-lg font-semibold">
-              Exclude Region 
+              Exclude Region
               <span v-if="gameSettings.gameDuplicates">(Duplicates)</span>
             </div>
             <div v-if="gameSettings.gameDuplicates" class="italic text-xs">
@@ -170,11 +171,18 @@
         <a href="/" class="bg-slate-500 px-4 py-2 text-white rounded-md">
           Back
         </a>
-        <button
-          class="bg-green-600 px-4 py-2 text-white rounded-md disabled:bg-gray-200 disabled:text-black disabled:cursor-not-allowed"
-          @click="filterRames">
-          Filter roms
-        </button>
+        <div>
+          <button v-if="jsonConfigRom"
+            class="bg-yellow-600 px-4 py-2 text-white rounded-md disabled:bg-gray-200 disabled:text-black disabled:cursor-not-allowed"
+            @click="copyFilteredRomsUsingExistingJson">
+            Copy filtered roms
+          </button>
+          <button
+            class="bg-green-600 px-4 py-2 text-white rounded-md disabled:bg-gray-200 disabled:text-black disabled:cursor-not-allowed"
+            @click="filterRames">
+            Filter roms
+          </button>
+        </div>
       </div>
 
 
@@ -193,6 +201,8 @@
       el: "#app",
       data: {
         // UI
+        emulator: null,
+        jsonConfigRom: false,
         showLogs: false,
         // default values for checkboxes
         categoriesMap: {},
@@ -296,23 +306,20 @@
           const changeFilters = document.getElementById('changeFilters');
           changeFilters.classList.add("hidden");
 
-          const emulator = localStorage.getItem('emulator');
-          
           // send data using web sockets
           wsSendMessage({
             event: 'copyRoms',
-            data: emulator
+            data: this.emulator
           });
         },
-        async filterRames () {
+        filterRames () {
           if (this.selectedSubCategories.length == 0) {
             alert('Please select a sub category!');
             return false;
           }
 
-          const emulator = localStorage.getItem('emulator');
           const mameFilters = {
-            emulator: emulator,
+            emulator: this.emulator,
             categories: this.selectedCategories,
             subCategories: this.selectedSubCategories,
             gameSettings: this.gameSettings,
@@ -366,9 +373,31 @@
 
           this.updateSubCategory();
         },
+        // check for previous json generated file to allow user to use it instead of generating a new one
+        async checkForPrevJson () {
+          const data = await $.ajax({
+            url: '/checkPrevJson',
+            type: 'POST',
+            data: {
+              emulator: this.emulator
+            }
+          });
+          this.jsonConfigRom = data;
+        },
+        copyFilteredRomsUsingExistingJson () {
+          // send data using web sockets
+          wsSendMessage({
+            event: 'copyRoms',
+            data: this.emulator
+          });
+
+          this.showLogs = true;
+        },
       },
       mounted () {
+        this.emulator = localStorage.getItem('emulator');
         this.loadDefaults();
+        this.checkForPrevJson();
       }
     });
   </script>

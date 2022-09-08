@@ -1,6 +1,7 @@
 const fs = require("fs");
+const path = require('path');
 
-module.exports = function (emulator, path, webSocket) {
+module.exports = function (emulator, webSocket) {
   webSocket.send(
     JSON.stringify({
       event: 'log',
@@ -9,13 +10,24 @@ module.exports = function (emulator, path, webSocket) {
     })
   );
 
+  console.log(`Preparing to copy ${emulator} roms...`);
+  webSocket.send(
+    JSON.stringify({
+      event: 'log',
+      newLine: true,
+      message: `Preparing to copy ${emulator} roms...`
+    })
+  );
+
   // set files / folders
-  const file = `${path}/${emulator}-roms-to-copy.json`;
-  const romFolder = `${path}/roms`;
-  const destionationFolder = `${path}/roms_filtered`;
+  const dir = path.resolve('./');
+  const file = `${dir}/${emulator}-roms-to-copy.json`;
+  const romFolder = `${dir}/roms`;
+  const destionationFolder = `${dir}/roms_filtered`;
 
   // check if json file was generated
   if (!fs.existsSync(file)) {
+    console.log(`File ${file} was not found. Please re-run the filter or contact dev if this reappears.`);
     webSocket.send(
       JSON.stringify({
         event: 'log',
@@ -24,11 +36,15 @@ module.exports = function (emulator, path, webSocket) {
       })
     );
 
+    // send completed signal
+    sendCompletedSignal(webSocket);
+
     return false;
   }
 
   // check if rom folder exists
   if (!fs.existsSync(romFolder)) {
+    console.log(`Folder '${romFolder}' was not found. Please make sure you have your rom folder inside the folder where you run this program. The folder must be called "roms"`);
     webSocket.send(
       JSON.stringify({
         event: 'log',
@@ -36,6 +52,9 @@ module.exports = function (emulator, path, webSocket) {
         message: `Folder '${romFolder}' was not found. Please make sure you have your rom folder inside the folder where you run this program. The folder must be called "roms"`
       })
     );
+
+    // send completed signal
+    sendCompletedSignal(webSocket);
 
     return false;
   }
@@ -48,17 +67,9 @@ module.exports = function (emulator, path, webSocket) {
   // create a folder for destination roms
   fs.mkdirSync(destionationFolder);
 
-  webSocket.send(
-    JSON.stringify({
-      event: 'log',
-      newLine: true,
-      message: `Preparing to copy ${emulator} roms...`
-    })
-  );
-
   copyRoms(file, romFolder, destionationFolder);
 
-
+  console.log(`Finished!`);
   webSocket.send(
     JSON.stringify({
       event: 'log',
@@ -67,13 +78,8 @@ module.exports = function (emulator, path, webSocket) {
     })
   );
 
-  webSocket.send(
-    JSON.stringify({
-      event: 'finish',
-      message: null
-    })
-  );
-
+  // send completed signal
+  sendCompletedSignal(webSocket);
 };
 
 function copyRoms (file, romFolder, destionationFolder) {
@@ -122,4 +128,14 @@ function copyRoms (file, romFolder, destionationFolder) {
       );
     }
   });
+}
+
+
+function sendCompletedSignal (webSocket) {
+  webSocket.send(
+    JSON.stringify({
+      event: 'finish',
+      message: null
+    })
+  );
 }

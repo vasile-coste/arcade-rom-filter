@@ -11,7 +11,7 @@ const { WebSocketServer } = require('ws');
 let bodyParser = require('body-parser');
 
 // include scripts
-const { CheckFiles, FilterMame, CopyRoms } = require('./events/index.js');
+const { CheckFiles, FilterMame, CopyRoms, CheckPrevJson } = require('./events/index.js');
 
 // creat app
 const app = Express();
@@ -27,11 +27,19 @@ app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
 
 app.use(Express.static(path.join(__dirname, 'public')));
 
+// check if files were already uploaded
 app.post('/checkFile', function (req, res) {
   const data = CheckFiles(req.body.emulator);
   res.send(data);
 });
 
+// check for previous json filtered roms
+app.post('/checkPrevJson', function (req, res) {
+  const data = CheckPrevJson(req.body.emulator);
+  res.send(data);
+});
+
+// upload file
 app.post('/upload-file', function (req, res) {
   if (!req.files || Object.keys(req.files).length === 0) {
     return res.status(400).send('No files were uploaded.');
@@ -115,10 +123,10 @@ wsServer.on('connection', (ws) => {
 
     switch (message.event) {
       case 'filterMame':
-        await FilterMame(message.data, path.resolve('./'), ws);;
+        await FilterMame(message.data, ws);;
         break;
       case 'copyRoms':
-        await CopyRoms(message.data, path.resolve('./'), ws);;
+        await CopyRoms(message.data, ws);;
         break;
       case 'exit':
         process.kill(process.pid, 'SIGTERM');
