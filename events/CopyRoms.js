@@ -87,12 +87,12 @@ function copyRoms (file, romFolder, destionationFolder) {
 
   jsonObj.forEach(element => {
     if (fs.existsSync(`${romFolder}/${element.rom}`)) {
-      console.log(`Copy '${rom.name}' from ${romFolder}/${element.rom} to ${destionationFolder}/${element.rom} ...`);
+      console.log(`Copy '${element.name}' from ${romFolder}/${element.rom} to ${destionationFolder}/${element.rom} ...`);
       webSocket.send(
         JSON.stringify({
           event: 'log',
           newLine: true,
-          message: `Copy '${rom.name}' from ${romFolder}/${element.rom} to ${destionationFolder}/${element.rom} ...`
+          message: `Copy '${element.name}' from ${romFolder}/${element.rom} to ${destionationFolder}/${element.rom} ...`
         })
       );
       try {
@@ -117,13 +117,13 @@ function copyRoms (file, romFolder, destionationFolder) {
         );
       }
     } else {
-      console.log(`Rom '${rom.name}' was not found in ${romFolder}/${element.rom}, will skip`);
+      console.log(`Rom '${element.name}' was not found in ${romFolder}/${element.rom}, will skip`);
 
       webSocket.send(
         JSON.stringify({
           event: 'log',
           newLine: true,
-          message: `Rom '${rom.name}' was not found in ${romFolder}/${element.rom}, will skip`
+          message: `Rom '${element.name}' was not found in ${romFolder}/${element.rom}, will skip`
         })
       );
     }
