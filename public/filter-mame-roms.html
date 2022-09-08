@@ -25,10 +25,15 @@
         <button class="hidden bg-gray-600 px-4 py-2 text-white rounded-md" id="changeFilters" @click="changeFilters">
           Change filters
         </button>
-        <button class="hidden bg-green-600 px-4 py-2 text-white rounded-md" id="saveFilteredRoms"
-          @click="saveFilteredRoms">
-          Save filtered roms
-        </button>
+        <div>
+          <a href="/" class="hidden bg-gray-600 px-4 py-2 text-white rounded-md" id="startOver">
+            Start Over
+          </a>
+          <button class="hidden bg-green-600 px-4 py-2 text-white rounded-md" id="saveFilteredRoms"
+            @click="saveFilteredRoms">
+            Save filtered roms
+          </button>
+        </div>
       </div>
     </div>
     <div v-else class="h-screen mx-auto py-2 -px-2 px-2 flex flex-col justify-between">
