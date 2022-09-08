@@ -19,4 +19,4 @@ Download the latest executable from [here](https://github.com/releases/latest).
 - go through the steps from the browser window
 
 ## For developers
-For developers, see [this](https://github.com/DEVELOPERS.md)
+For developers, see [this](https://github.com/vasile-coste/arcade-rom-filter/blob/main/DEVELOPERS.md)
