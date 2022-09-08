@@ -28,7 +28,7 @@ app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
 app.use(Express.static(path.join(__dirname, 'public')));
 
 app.post('/checkFile', function (req, res) {
-  const data = CheckFiles(req.body.emulator, __dirname);
+  const data = CheckFiles(req.body.emulator);
   res.send(data);
 });
 
@@ -40,7 +40,7 @@ app.post('/upload-file', function (req, res) {
   const file = req.files.file;
   const ext = file.name.split(".");
   const fileName = req.body.emulator + '.' + ext[ext.length - 1];
-  const uploadPath = __dirname + '/' + fileName;
+  const uploadPath = path.resolve('./' + fileName);
 
   // Use the mv() method to place the file somewhere on your server
   file.mv(uploadPath, function (err) {
@@ -115,10 +115,10 @@ wsServer.on('connection', (ws) => {
 
     switch (message.event) {
       case 'filterMame':
-        await FilterMame(message.data, path.join(__dirname), ws);;
+        await FilterMame(message.data, path.resolve('./'), ws);;
         break;
       case 'copyRoms':
-        await CopyRoms(message.data, path.join(__dirname), ws);;
+        await CopyRoms(message.data, path.resolve('./'), ws);;
         break;
       case 'exit':
         process.kill(process.pid, 'SIGTERM');

@@ -33,7 +33,7 @@ module.exports = function (emulator, path, webSocket) {
       JSON.stringify({
         event: 'log',
         newLine: true,
-        message: `Folder '${romFolder}' was not found. Please make sure you have your rom folder inside the folder where you run this program.`
+        message: `Folder '${romFolder}' was not found. Please make sure you have your rom folder inside the folder where you run this program. The folder must be called "roms"`
       })
     );
 
