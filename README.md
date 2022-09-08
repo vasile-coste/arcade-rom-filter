@@ -8,7 +8,7 @@ This is an app that filters roms from:
 - with time maybe others?
 
 ## Required
-If you plan to use it from source, you'll also require [Node.js >= 16](https://nodejs.org/).
+You'll also require [Node.js >= 16](https://nodejs.org/).
 
 ## How to use
 Download the latest executable from [here](https://github.com/releases/latest).
