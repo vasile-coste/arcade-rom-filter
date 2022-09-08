@@ -221,6 +221,7 @@ function mameSettings () {
     ],
     gameSettings: prevData ? prevData.gameSettings : {
       gameClones: true,
+      gameDuplicates: true,
       gameGood: true,
       gameImperfect: false,
       gamePreliminary: false

@@ -21,9 +21,12 @@
         <div class="font-semibold">Staring...</div>
       </div>
 
-      <div class="flex pt-4 justify-end">
-        <button class="hidden" id="nextStept" @click="nextStep">
-          Next
+      <div class="flex pt-4 justify-between">
+        <button class="hidden bg-gray-600 px-4 py-2 text-white rounded-md" id="changeFilters" @click="changeFilters">
+          Change filters
+        </button>
+        <button class="hidden bg-green-600 px-4 py-2 text-white rounded-md" id="saveFilteredRoms" @click="saveFilteredRoms">
+          Save filtered roms
         </button>
       </div>
     </div>
@@ -38,7 +41,7 @@
           <!-- Main Categories -->
           <div class="w-full border-2 p-1">
             <div class="text-lg font-semibold">Main Categories*</div>
-            <div class="italic text-sm">Select which game category you want to keep</div>
+            <div class="italic text-xs">Select which game category you want to keep</div>
             <div class="w-full">
               <input type="checkbox" v-model="toggleCategories" id="toggle-categories">
               <label class="cursor-pointer" for="toggle-categories">Toggle All</label>
@@ -53,7 +56,7 @@
           <!-- Sub Categories -->
           <div class="w-full border-2 p-1">
             <div class="text-lg font-semibold">Sub Categories*</div>
-            <div class="italic text-sm">Select which game sub category you want to keep</div>
+            <div class="italic text-xs">Select which game sub category you want to keep</div>
             <div class="flex flex-row">
               <div class="w-1/2">
                 <input type="checkbox" v-model="toggleSubCategories" id="toggle-sub-categories">
@@ -74,11 +77,16 @@
           <!-- Games Settings -->
           <div class="w-full border-2 p-1">
             <div class="text-lg font-semibold">Games Settings</div>
-            <div class="italic text-sm">check/uncheck want you need</div>
+            <div class="italic text-xs">Check/uncheck what you need</div>
             <div class="w-full h-56 my-2 overflow-y-auto">
               <div class="w-full hover:bg-gray-200 px-1">
                 <input type="checkbox" v-model="gameSettings.gameClones" id="game-gameClones">
                 <label for="game-gameClones">Remove Clones</label>
+              </div>
+              <div class="w-full hover:bg-gray-200 px-1">
+                <input type="checkbox" v-model="gameSettings.gameDuplicates" id="game-gameDuplicates">
+                <label for="game-gameDuplicates">Remove Duplicates</label>
+                <div class="italic text-xs">Will remove roms that have different versions, regions...</div>
               </div>
               <div class="w-full hover:bg-gray-200 px-1">
                 <input type="checkbox" v-model="gameSettings.gameGood" id="game-good">
@@ -97,11 +105,11 @@
           <!-- extra game settings -->
           <div class="w-full border-2 p-1">
             <div class="text-lg font-semibold">Extra Settings</div>
-            <div class="italic text-sm">check/uncheck want you need</div>
+            <div class="italic text-xs">Check/uncheck what manufacturer you want to remove</div>
             <div class="w-full h-56 my-2 overflow-y-auto">
               <div class="w-full hover:bg-gray-200 px-1" v-for="(item, cnt) in excludeGamesContaining">
                 <input type="checkbox" v-model="selectedExtraSettings" :value="item" :id="'extragame-' + cnt">
-                <label class="cursor-pointer" :for="'extragame-'+cnt">Exclude roms manufacturer with {{item}}</label>
+                <label class="cursor-pointer" :for="'extragame-'+cnt">Remove manufacturer with {{item}}</label>
               </div>
             </div>
           </div>
@@ -110,8 +118,14 @@
         <div class="flex flex-row mt-1">
           <!-- Exclude Region -->
           <div class="w-80 border-2 p-1">
-            <div class="text-lg font-semibold">Exclude Region</div>
-            <div class="italic text-sm">Select which regions you want to exclude</div>
+            <div class="text-lg font-semibold">
+              Exclude Region 
+              <span v-if="gameSettings.gameDuplicates">(Duplicates)</span>
+            </div>
+            <div v-if="gameSettings.gameDuplicates" class="italic text-xs">
+              In searching for the unique rom will remove first region then will select a random one from what remains
+            </div>
+            <div v-else class="italic text-xs">Select which regions you want to exclude</div>
             <div class="w-full">
               <input type="checkbox" v-model="toggleRegions" id="toggle-regions">
               <label class="cursor-pointer" for="toggle-regions">Toggle All</label>
@@ -126,7 +140,7 @@
           <!-- extra filters for roms clones -->
           <div class="border-2 p-1">
             <div class="text-lg font-semibold">Extra filters</div>
-            <div class="italic text-sm">
+            <div class="italic text-xs">
               Even after the above filters, there may still be some clones with different names, sets or versions.
               This will exclude all game roms that contain this exact string.
             </div>
@@ -152,12 +166,12 @@
       </div>
 
       <!-- continue to next step -->
-      <div class="flex pt-4 justify-between">
+      <div class="flex mt-4 justify-between">
         <a href="/" class="bg-slate-500 px-4 py-2 text-white rounded-md">
           Back
         </a>
         <button
-          class="bg-green-600 px-4 py-2 text-white rounded-md mr-4 disabled:bg-gray-200 disabled:text-black disabled:cursor-not-allowed"
+          class="bg-green-600 px-4 py-2 text-white rounded-md disabled:bg-gray-200 disabled:text-black disabled:cursor-not-allowed"
           @click="filterRames">
           Filter roms
         </button>
@@ -272,11 +286,23 @@
         },
       },
       methods: {
-        nextStep () {
-          const emulator = localStorage.getItem('emulator');
-          // next page
-          // location.href = `/copy-${emulator}-roms.html`;
+        changeFilters () {
           this.showLogs = false;
+        },
+        saveFilteredRoms () {
+          // hide buttons
+          const saveFilteredRoms = document.getElementById('saveFilteredRoms');
+          saveFilteredRoms.classList.add("hidden");
+          const changeFilters = document.getElementById('changeFilters');
+          changeFilters.classList.add("hidden");
+
+          const emulator = localStorage.getItem('emulator');
+          
+          // send data using web sockets
+          wsSendMessage({
+            event: 'copyRoms',
+            data: emulator
+          });
         },
         async filterRames () {
           if (this.selectedSubCategories.length == 0) {

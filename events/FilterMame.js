@@ -1,6 +1,6 @@
 const fs = require("fs");
 const convert = require('xml-js');
-const CreateFile = require('./CreateFile.js');
+const { createFile, getFilesize } = require('./File.js');
 
 module.exports = function (data, path, webSocket) {
 
@@ -11,6 +11,7 @@ module.exports = function (data, path, webSocket) {
     data.categories.map(string => string.toLowerCase()),
     data.subCategories.map(string => string.toLowerCase())
   );
+
   const romsFromXML = getRomDataFromXMLAndFilter(
     webSocket,
     data.emulator,
@@ -20,10 +21,24 @@ module.exports = function (data, path, webSocket) {
     data.extraSettings.map(string => string.toLowerCase()),
     data.extraFilters.map(string => string.toLowerCase())
   );
-  const finalRoms = excludeRomsRegions(webSocket, romsFromXML, data.excludeRegions);
+
+  const finalRoms = excludeRomsRegions(
+    webSocket,
+    romsFromXML,
+    data.excludeRegions.map(string => string.toLowerCase()),
+    data.gameSettings.gameDuplicates
+  );
 
   // create a file
-  CreateFile(path, data.emulator, finalRoms);
+  createFile(path, data.emulator, finalRoms);
+
+  webSocket.send(
+    JSON.stringify({
+      event: 'log',
+      newLine: true,
+      message: 'Filter worked finished!'
+    })
+  );
 
   webSocket.send(
     JSON.stringify({
@@ -144,12 +159,12 @@ function getRomDataFromXMLAndFilter (webSocket, emulator, path, romsWithCategory
       })
     );
 
-    console.log('Please wait, converting to json (~30 sec) ...');
+    console.log(`Please wait, converting to json (filesize = ${getFilesize(file)}) ...`);
     webSocket.send(
       JSON.stringify({
         event: 'log',
         newLine: true,
-        message: 'Please wait, converting to json (~30 sec) ...'
+        message: `Please wait, converting to json (filesize = ${getFilesize(file)}) ...`
       })
     );
     const jsonData = convert.xml2js(xmlData, { compact: true, spaces: 4 });
@@ -163,12 +178,12 @@ function getRomDataFromXMLAndFilter (webSocket, emulator, path, romsWithCategory
 
     const romsMapped = [];
     if (jsonData.mame) {
-      console.log('Reading data from "jsonData.mame.machine"...');
+      console.log(`Reading data from 'jsonData.mame.machine', there are ${jsonData.mame.machine.length} roms to filter ...`);
       webSocket.send(
         JSON.stringify({
           event: 'log',
           newLine: true,
-          message: 'Reading data from "jsonData.mame.machine"...'
+          message: `Reading data from 'jsonData.mame.machine', there are ${jsonData.mame.machine.length} roms to filter ...`
         })
       );
 
@@ -180,12 +195,12 @@ function getRomDataFromXMLAndFilter (webSocket, emulator, path, romsWithCategory
         }
       });
     } else if (jsonData.datafile) {
-      console.log('Reading data from "jsonData.datafile.machine"');
+      console.log(`Reading data from 'jsonData.datafile.machine', there are ${jsonData.datafile.machine.length} roms to filter ...`);
       webSocket.send(
         JSON.stringify({
           event: 'log',
           newLine: true,
-          message: 'Reading data from "jsonData.datafile.machine"'
+          message: `Reading data from 'jsonData.datafile.machine', there are ${jsonData.datafile.machine.length} roms to filter ...`
         })
       );
 
@@ -238,13 +253,15 @@ function romMapperM (rom, romsWithCategory, gameSettings, extraSettings, extraFi
     (rom.driver._attributes.status == 'preliminary' && gameSettings.gamePreliminary) ||
     (!gameSettings.gameGood && !gameSettings.gameImperfect && !gameSettings.gamePreliminary)
   ) {
+    const checkExtraSettings = extraSettings.filter(filter => rom.manufacturer._text.toLowerCase().includes(filter));
     if (
       extraSettings.length == 0 ||
-      (extraSettings.length > 0 && !extraSettings.includes(rom.manufacturer._text.toLowerCase()))
+      (extraSettings.length > 0 && checkExtraSettings.length == 0)
     ) {
+      const checkExtraFilters = extraFilters.filter(filter => rom.description._text.toLowerCase().includes(filter));
       if (
         extraFilters.length == 0 ||
-        (extraFilters.length > 0 && !extraFilters.includes(rom.description._text.toLowerCase()))
+        (extraFilters.length > 0 && checkExtraFilters.length == 0)
       ) {
         console.log(`ROM ${rom._attributes.name} with name ${rom.description._text} was added!`);
         const groupArr = rom.description._text.split('(');
@@ -283,6 +300,80 @@ function romMapperD (rom, romsWithCategory, gameSettings, extraSettings, extraFi
   return false;
 }
 
-function excludeRomsRegions (webSocket, romsFromXML, excludeRegions) {
-  return romsFromXML;
+function excludeRomsRegions (webSocket, romsFromXML, excludeRegions, gameDuplicates) {
+  let roms = [];
+  if (gameDuplicates) {
+    console.log(`Preparing to apply 'Exclude Region (Duplicates)' filter to remove all duplicates and keeping only one rom`);
+    webSocket.send(
+      JSON.stringify({
+        event: 'log',
+        newLine: true,
+        message: `Preparing to apply 'Exclude Region (Duplicates)' filter to remove all duplicates and keeping only one rom`
+      })
+    );
+    console.log(`Grouping roms...`);
+
+    // map roms with same name
+    const romsGrouped = new Map();
+    romsFromXML.forEach(rom => {
+      if (romsGrouped.has(rom.group)) {
+        romsGrouped.set(rom.group, romsGrouped.get(rom.group).concat([rom]));
+      } else {
+        romsGrouped.set(rom.group, [rom]);
+      }
+    });
+
+    console.log(`Filtering grouped roms...`);
+
+    // remove duplicates
+    romsGrouped.forEach(romArr => {
+      if (romArr.length == 1) {
+        console.log(`Only 1 rom found will add as final rom: ${romArr[0].name}`);
+        roms.push(romArr[0]);
+      } else {
+        const tmpArr = romArr.filter(rom => {
+          const check = excludeRegions.filter(region => rom.name.toLowerCase().includes(region));
+          console.log(`ROM name ${rom.name} ${check.length > 0 ? 'is excluded, has region ' + check.join('|') : 'is marked as accepted'} `);
+          return check.length > 0 ? false : true;
+        });
+        console.log(`Found ${tmpArr.length} rom(s) after region filters, will add as final rom: ${tmpArr.length > 0 ? tmpArr[0].name : romArr[0].name}`);
+        roms.push(tmpArr.length > 0 ? tmpArr[0] : romArr[0]);
+      }
+    })
+
+  } else {
+    console.log(`Preparing to apply 'Exclude Region' filter ...`);
+    webSocket.send(
+      JSON.stringify({
+        event: 'log',
+        newLine: true,
+        message: `Preparing to apply 'Exclude Region' filter ...`
+      })
+    );
+
+    roms = romsFromXML.filter(rom => {
+      const check = excludeRegions.filter(region => rom.name.toLowerCase().includes(region));
+      console.log(`ROM name ${rom.name} ${check.length > 0 ? ' is excluded' : 'is accepted'} `);
+      return check.length > 0 ? false : true;
+    });
+  }
+
+  webSocket.send(
+    JSON.stringify({
+      event: 'log',
+      newLine: false,
+      message: `Done`
+    })
+  );
+
+  console.log(`${roms.length} roms found after applying '${gameDuplicates ? 'Exclude Region (Duplicates)' : 'Exclude Region'}'`);
+  webSocket.send(
+    JSON.stringify({
+      event: 'log',
+      newLine: true,
+      message: `${roms.length} roms found after applying '${gameDuplicates ? 'Exclude Region (Duplicates)' : 'Exclude Region'}'`
+    })
+  );
+
+  return roms;
 }

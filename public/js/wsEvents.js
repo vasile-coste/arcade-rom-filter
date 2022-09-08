@@ -4,7 +4,6 @@ const ws = new WebSocket(WS_URI);
 
 ws.onmessage = (ev) => {
   const msg = JSON.parse(ev.data);
-  console.log(msg)
   switch (msg.event) {
     case 'log':
       const logOutput = document.getElementById('logOutput');
@@ -23,8 +22,15 @@ ws.onmessage = (ev) => {
       break;
     case 'next':
       // show next step
-      const nextStept = document.getElementById('nextStept');
-      nextStept.classList.remove("hidden");
+      const saveFilteredRoms = document.getElementById('saveFilteredRoms');
+      saveFilteredRoms.classList.remove("hidden");
+      const changeFilters = document.getElementById('changeFilters');
+      changeFilters.classList.remove("hidden");
+      break;
+    case 'finish':
+      // hide button for re-run
+      const elem = document.getElementById('saveFilteredRoms');
+      elem.classList.add("hidden");
       break;
     default:
       console.log('untreated event', msg);
