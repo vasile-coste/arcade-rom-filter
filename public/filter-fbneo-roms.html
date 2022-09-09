@@ -5,7 +5,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width" />
   <title>
-    Arcade rom filter
+    Arcade rom filter - FB Neo
   </title>
   <link href="/css/style.css" rel="stylesheet" type="text/css" />
   <link rel="icon" href="/favicon.ico" type="image/x-icon">
@@ -13,41 +13,305 @@
 
 <body>
 
-  <div class="bg-gray-50 mx-auto py-2 -px-2 px-2 h-screen flex flex-col justify-between" id="app">
+  <div class="bg-gray-50" id="app">
 
-    <div class="w-full overflow-auto max-h-screen">
-      <div class="py-1 text-2xl font-semibold">
-        Filter FB Neo roms
+    <div v-if="showLogs" class="h-screen mx-auto py-2 -px-2 px-2 flex flex-col justify-between">
+      <!-- logs -->
+      <div class="w-full overflow-auto max-h-screen" id="logOutput">
+        <div class="font-semibold">Staring...</div>
       </div>
-      Work in progress...
 
+      <div class="flex pt-4 justify-between">
+        <button class="hidden bg-gray-600 px-4 py-2 text-white rounded-md" id="changeFilters" @click="changeFilters">
+          Change filters
+        </button>
+        <div>
+          <a href="/" class="hidden bg-gray-600 px-4 py-2 text-white rounded-md" id="startOver">
+            Start Over
+          </a>
+          <button class="hidden bg-green-600 px-4 py-2 text-white rounded-md" id="saveFilteredRoms"
+            @click="saveFilteredRoms">
+            Save filtered roms
+          </button>
+        </div>
+      </div>
     </div>
+    <div v-else class="h-screen mx-auto py-2 -px-2 px-2 flex flex-col justify-between">
+      <!-- filters -->
+      <div class="w-full overflow-auto max-h-screen">
+        <div class="py-1 text-2xl font-semibold">
+          Filter FB Neo roms
+        </div>
+
+        <div class="flex flex-row">
+          <!-- Games Settings -->
+          <div class="w-full border-2 p-1">
+            <div class="text-lg font-semibold">Games Settings</div>
+            <div class="italic text-xs">Check/uncheck what you need</div>
+            <div class="w-full h-56 my-2 overflow-y-auto">
+              <div class="w-full hover:bg-gray-200 px-1">
+                <input type="checkbox" v-model="gameSettings.gameClones" id="game-gameClones">
+                <label for="game-gameClones">Remove Clones</label>
+              </div>
+              <div class="w-full hover:bg-gray-200 px-1">
+                <input type="checkbox" v-model="gameSettings.gameDuplicates" id="game-gameDuplicates">
+                <label for="game-gameDuplicates">Remove Duplicates</label>
+                <div class="italic text-xs">Will remove roms that have different versions, regions...</div>
+              </div>
+              <div class="w-full hover:bg-gray-200 px-1">
+                <input type="checkbox" v-model="gameSettings.gameGood" id="game-good">
+                <label for="game-good">Keep working games</label>
+              </div>
+              <div class="w-full hover:bg-gray-200 px-1">
+                <input type="checkbox" v-model="gameSettings.gameImperfect" id="game-imperfect">
+                <label for="game-imperfect">Keep imperfect games</label>
+              </div>
+              <div class="w-full hover:bg-gray-200 px-1">
+                <input type="checkbox" v-model="gameSettings.gamePreliminary" id="game-preliminary">
+                <label for="game-preliminary">Keep preliminary games</label>
+              </div>
+            </div>
+          </div>
+          <!-- extra game settings -->
+          <div class="w-full border-2 p-1">
+            <div class="text-lg font-semibold">Extra Settings</div>
+            <div class="italic text-xs">Check/uncheck what manufacturer you want to remove</div>
+            <div class="w-full h-56 my-2 overflow-y-auto">
+              <div class="w-full hover:bg-gray-200 px-1" v-for="(item, cnt) in excludeGamesContaining">
+                <input type="checkbox" v-model="selectedExtraSettings" :value="item" :id="'extragame-' + cnt">
+                <label class="cursor-pointer" :for="'extragame-'+cnt">Remove manufacturer with {{item}}</label>
+              </div>
+            </div>
+          </div>
+          <!-- Exclude Region -->
+          <div class="w-full border-2 p-1">
+            <div class="text-lg font-semibold">
+              Exclude Region
+              <span v-if="gameSettings.gameDuplicates">(Duplicates)</span>
+            </div>
+            <div v-if="gameSettings.gameDuplicates" class="italic text-xs">
+              In searching for the unique rom will remove first region then will select a random one from what remains. If none remains then a rom random rom will be selected.
+            </div>
+            <div v-else class="italic text-xs">Select which regions you want to exclude</div>
+            <div class="w-full">
+              <input type="checkbox" v-model="toggleRegions" id="toggle-regions">
+              <label class="cursor-pointer" for="toggle-regions">Toggle All</label>
+            </div>
+            <div class="w-full h-56 my-2 overflow-y-auto">
+              <div class="w-full hover:bg-gray-200 px-1" v-for="(item, cnt) in regions">
+                <input type="checkbox" v-model="selectedRegions" :value="item" :id="'regions-' + cnt">
+                <label class="cursor-pointer" :for="'regions-'+cnt">{{item}}</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex flex-row mt-1">
+          <!-- extra filters for roms clones -->
+          <div class="w-full border-2 p-1">
+            <div class="text-lg font-semibold">Extra filters</div>
+            <div class="italic text-xs">
+              Even after the above filters, there may still be some clones with different names, sets or versions.
+              This will exclude all game roms that contain this exact string.
+            </div>
+            <div class="flex">
+              <div>
+                <input type="checkbox" v-model="toggleGameClones" id="toggle-game-clones">
+                <label class="cursor-pointer" for="toggle-game-clones">Toggle All</label>
+              </div>
+              <div class="ml-2">
+                <input class="w-full border-2 rounded-md" type="text" v-model="findClones" placeholder="Find...">
+              </div>
+            </div>
+            <div class="grid grid-cols-3 h-56 my-2 overflow-y-auto">
+              <div :class="{'hidden' : findClones && !item.toLowerCase().includes(findClones.toLowerCase()) }"
+                class="w-full hover:bg-gray-200 px-1" v-for="(item, cnt) in extraFilters">
+                <input type="checkbox" v-model="selectedExtraFilters" :value="item" :id="'gameclone-' + cnt">
+                <label class="cursor-pointer" :for="'gameclone-'+cnt">{{item}}</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- continue to next step -->
+      <div class="flex mt-4 justify-between">
+        <a href="/" class="bg-slate-500 px-4 py-2 text-white rounded-md">
+          Back
+        </a>
+        <div>
+          <button v-if="jsonConfigRom"
+            class="bg-yellow-600 px-4 py-2 text-white rounded-md disabled:bg-gray-200 disabled:text-black disabled:cursor-not-allowed"
+            @click="copyFilteredRomsUsingExistingJson">
+            Copy filtered roms
+          </button>
+          <button
+            class="bg-green-600 px-4 py-2 text-white rounded-md disabled:bg-gray-200 disabled:text-black disabled:cursor-not-allowed"
+            @click="filterRoms">
+            Filter roms
+          </button>
+        </div>
+      </div>
 
 
-    <!-- continue to next step -->
-    <div class="flex pt-4 justify-between">
-      <a href="/" class="bg-slate-500 px-4 py-2 text-white rounded-md">
-        Back
-      </a>
-      <button class="bg-green-600 px-4 py-2 text-white rounded-md mr-4">
-        Filter roms
-      </button>
     </div>
 
   </div>
 
 
   <script src="/js/jquery.min.js"></script>
-  <script src="/filter-fbneo-roms.js"></script>
+  <script src="/js/wsEvents.js"></script>
+  <script src="/js/fbneo-settings.js"></script>
   <script src="/js/vue.js"></script>
   <script>
+
     new Vue({
       el: "#app",
-      data: {},
-      watch: {},
-      computed: {},
-      methods: {},
-      mounted() {},
+      data: {
+        // UI
+        emulator: null,
+        jsonConfigRom: false,
+        showLogs: false,
+        // default values for checkboxes
+        regions: [],
+        excludeGamesContaining: [],
+        extraFilters: [],
+        // logics - selected values
+        selectedRegions: [],
+        gameSettings: {},
+        selectedExtraSettings: [],
+        selectedExtraFilters: [],
+        findSubCategory: null,
+        findClones: null
+      },
+      watch: { },
+      computed: {
+        toggleRegions: {
+          get: function () {
+            return this.selectedRegions.length == this.regions.length;
+          },
+          set: function (selected) {
+            const regions = [];
+
+            if (selected) {
+              this.regions.forEach((item) => {
+                regions.push(item);
+              });
+            }
+
+            this.selectedRegions = regions;
+          }
+        },
+        toggleGameClones: {
+          get: function () {
+            return this.selectedExtraFilters.length == this.extraFilters.length;
+          },
+          set: function (selected) {
+            const extraFilters = [];
+
+            if (selected) {
+              this.extraFilters.forEach((item) => {
+                extraFilters.push(item);
+              });
+            }
+
+            this.selectedExtraFilters = extraFilters;
+          }
+        },
+      },
+      methods: {
+        changeFilters () {
+          this.showLogs = false;
+        },
+        saveFilteredRoms () {
+          // hide buttons
+          const saveFilteredRoms = document.getElementById('saveFilteredRoms');
+          saveFilteredRoms.classList.add("hidden");
+          const changeFilters = document.getElementById('changeFilters');
+          changeFilters.classList.add("hidden");
+
+          // send data using web sockets
+          wsSendMessage({
+            event: 'copyRoms',
+            data: this.emulator
+          });
+        },
+        filterRoms () {
+          const selectedFilters = {
+            emulator: this.emulator,
+            gameSettings: this.gameSettings,
+            extraSettings: this.selectedExtraSettings,
+            extraFilters: this.selectedExtraFilters,
+            excludeRegions: this.selectedRegions
+          }
+
+          // save data to local storage
+          localStorage.setItem('filterSettings', JSON.stringify(selectedFilters));
+
+          this.showLogs = true;
+
+          // send data using web sockets
+          wsSendMessage({
+            event: 'filterFBNeo',
+            data: selectedFilters
+          });
+        },
+        updateSubCategory () {
+          let subCats = [];
+
+          this.selectedCategories.forEach((item) => {
+            subCats = subCats.concat(this.categoriesMap[item]);
+          });
+
+          // unique
+          subCats = [...new Set(subCats)];
+          subCats.sort();
+          this.subCategories = [...subCats];
+
+          // keep only those that are available
+          this.selectedSubCategories = [...this.selectedSubCategories.filter(v => this.subCategories.includes(v))];
+        },
+        async loadDefaults () {
+          const data = await fbneoSettings();
+
+          //load defaults
+          this.regions = data.regions;
+          this.excludeGamesContaining = data.excludeGamesContaining;
+          this.extraFilters = data.extraFilters;
+          this.selectedRegions = data.selectedRegions;
+          this.gameSettings = data.gameSettings;
+          this.selectedExtraSettings = data.selectedExtraSettings;
+          this.selectedExtraFilters = data.selectedExtraFilters;
+
+          this.updateSubCategory();
+        },
+        // check for previous json generated file to allow user to use it instead of generating a new one
+        async checkForPrevJson () {
+          const data = await $.ajax({
+            url: '/checkPrevJson',
+            type: 'POST',
+            data: {
+              emulator: this.emulator
+            }
+          });
+          this.jsonConfigRom = data;
+        },
+        copyFilteredRomsUsingExistingJson () {
+          // send data using web sockets
+          wsSendMessage({
+            event: 'copyRoms',
+            data: this.emulator
+          });
+
+          this.showLogs = true;
+        },
+      },
+      mounted () {
+        this.emulator = localStorage.getItem('emulator');
+        this.loadDefaults();
+        this.checkForPrevJson();
+      }
     });
   </script>
 </body>

@@ -23,7 +23,7 @@ module.exports = function (emulator, webSocket) {
   const dir = path.resolve('./');
   const file = `${dir}/${emulator}-roms-to-copy.json`;
   const romFolder = `${dir}/roms`;
-  const destionationFolder = `${dir}/roms_filtered`;
+  const destionationFolder = `${dir}/${emulator}_filtered`;
 
   // check if json file was generated
   if (!fs.existsSync(file)) {

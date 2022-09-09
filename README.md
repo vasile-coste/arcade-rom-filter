@@ -1,10 +1,7 @@
-# THIS IS A WORK IN PROGRESS
-I'm currenly doing this in my free time
-
 # Arcade rom filter
 This is an app that filters roms from:
 - MAME 
-- FB Neo (in progress)
+- FB Neo
 - with time maybe others?
 
 ## Required
@@ -20,3 +17,7 @@ Download the latest executable from [here](https://github.com/releases/latest).
 
 ## For developers
 For developers, see [this](https://github.com/vasile-coste/arcade-rom-filter/blob/main/DEVELOPERS.md)
+
+If you have ideas or want to contribute, you can create a PR or an issue ticket
+
+Feel free to fork and modify this to your needs

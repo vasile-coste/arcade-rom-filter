@@ -5,7 +5,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width" />
   <title>
-    Arcade rom filter
+    Arcade rom filter - Mame
   </title>
   <link href="/css/style.css" rel="stylesheet" type="text/css" />
   <link rel="icon" href="/favicon.ico" type="image/x-icon">
@@ -129,7 +129,7 @@
               <span v-if="gameSettings.gameDuplicates">(Duplicates)</span>
             </div>
             <div v-if="gameSettings.gameDuplicates" class="italic text-xs">
-              In searching for the unique rom will remove first region then will select a random one from what remains
+              In searching for the unique rom will remove first region then will select a random one from what remains. If none remains then a rom random rom will be selected.
             </div>
             <div v-else class="italic text-xs">Select which regions you want to exclude</div>
             <div class="w-full">
@@ -184,7 +184,7 @@
           </button>
           <button
             class="bg-green-600 px-4 py-2 text-white rounded-md disabled:bg-gray-200 disabled:text-black disabled:cursor-not-allowed"
-            @click="filterRames">
+            @click="filterRoms">
             Filter roms
           </button>
         </div>
@@ -317,13 +317,13 @@
             data: this.emulator
           });
         },
-        filterRames () {
+        filterRoms () {
           if (this.selectedSubCategories.length == 0) {
             alert('Please select a sub category!');
             return false;
           }
 
-          const mameFilters = {
+          const selectedFilters = {
             emulator: this.emulator,
             categories: this.selectedCategories,
             subCategories: this.selectedSubCategories,
@@ -334,7 +334,7 @@
           }
 
           // save data to local storage
-          localStorage.setItem('filterSettings', JSON.stringify(mameFilters));
+          localStorage.setItem('filterSettings', JSON.stringify(selectedFilters));
 
           this.showLogs = true;
 

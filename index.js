@@ -11,7 +11,7 @@ const { WebSocketServer } = require('ws');
 let bodyParser = require('body-parser');
 
 // include scripts
-const { CheckFiles, FilterMame, CopyRoms, CheckPrevJson } = require('./events/index.js');
+const { CheckFiles, FilterMame, FilterFBNeo, CopyRoms, CheckPrevJson } = require('./events/index.js');
 
 // creat app
 const app = Express();
@@ -124,6 +124,9 @@ wsServer.on('connection', (ws) => {
     switch (message.event) {
       case 'filterMame':
         await FilterMame(message.data, ws);;
+        break;
+      case 'filterFBNeo':
+        await FilterFBNeo(message.data, ws);;
         break;
       case 'copyRoms':
         await CopyRoms(message.data, ws);;
