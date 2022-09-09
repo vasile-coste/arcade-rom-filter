@@ -25,9 +25,14 @@ This is also simple,
 git clone https://github.com/vasile-coste/arcade-rom-filter.git
 cd arcade-rom-filter
 npm i
-npx pkg -t linux-x64,macos-x64,win-x64 -C GZip .
+npm run pkg-all
 ```
 or if you want to build only for windows:
 ```bash
-npm run pkg
+npm run pkg-win
+```
+
+stand alone command
+```bash
+npx pkg -t linux-x64,macos-x64,win-x64 -C GZip .
 ```
