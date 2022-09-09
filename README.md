@@ -8,7 +8,7 @@ This is an app that filters roms from:
 You'll also require [Node.js >= 16](https://nodejs.org/).
 
 ## How to use
-Download the latest executable from [here](https://github.com/releases/latest).
+Download the latest executable from [here](https://github.com/vasile-coste/arcade-rom-filter/releases).
 - copy the file into your workspace
 - the workspace must have your rom folder called <b>roms</b>
 - run exe file
