@@ -17,7 +17,7 @@ module.exports = function (data, webSocket) {
     /**  
      * Filter roms by category and sub category and return an object
      * */
-    const romsWithCategory = getRomCategoriesFromIniAndFilter(
+    romsWithCategory = getRomCategoriesFromIniAndFilter(
       webSocket,
       data.emulator,
       dir,
@@ -180,13 +180,11 @@ function getRomDataFromXMLAndFilter (webSocket, emulator, path, romsWithCategory
 
     sendWsSignal(webSocket, 'Done', false);
 
-    sendWsSignal(webSocket, `Please wait, converting to json (filesize = ${getFilesize(file)}) ...`);
+    sendWsSignal(webSocket, `Please wait, converting to json (filesize = ${getFilesize(file)}), depending on the size it may take more time ...`);
     const jsonData = convert.xml2js(xmlData, { compact: true, spaces: 4 });
     sendWsSignal(webSocket, 'Done.', false);
 
     if (jsonData.mame || jsonData.datafile) {
-      sendWsSignal(webSocket, `Reading data from 'datafile.machine', there are ${jsonData.datafile.machine.length} roms to filter ...`);
-
       let datRoms = [];
       // check what to iterate
       if (jsonData.mame){
@@ -196,6 +194,8 @@ function getRomDataFromXMLAndFilter (webSocket, emulator, path, romsWithCategory
           jsonData.datafile.machine :
           (jsonData.datafile.game && jsonData.datafile.game.length > 0 ? jsonData.datafile.game : []);
       }
+
+      sendWsSignal(webSocket, `Reading data from file, there are ${datRoms.length} roms to filter (more info in shell log) ...`);
 
       datRoms.forEach(rom => {
         const tmp = romMapper(rom, gameSettings, extraSettings, extraFilters, romsWithCategory);
@@ -211,7 +211,7 @@ function getRomDataFromXMLAndFilter (webSocket, emulator, path, romsWithCategory
       sendWsSignal(webSocket, `File ${file} is not supported, contact dev to include it.`);
     }
 
-    sendWsSignal(webSocket, `${romsMapped.length} roms after applying 'Games Settings' and 'Extra filters'.`);
+    sendWsSignal(webSocket, `${romsMapped.games.length} roms and ${romsMapped.bios.length} bios files after applying 'Games Settings' and 'Extra filters'.`);
 
   } catch (err) {
     console.error(err);
@@ -243,6 +243,11 @@ function romMapper (rom, gameSettings, extraSettings, extraFilters, romsWithCate
       console.log(`ROM ${rom._attributes.name} with name ${rom.description._text} was skipped because is excluded from main category/subcategory`);
       return false;
     }
+  }
+
+  if (rom._attributes.isdevice && rom._attributes.isdevice == 'yes'){
+    console.log(`ROM ${rom._attributes.name} with name ${rom.description._text} was skipped because is a device and it's not runnable`);
+    return false;
   }
 
   // check for clones, note that some xml/dat do not have this property
@@ -301,7 +306,7 @@ function romMapper (rom, gameSettings, extraSettings, extraFilters, romsWithCate
     }
   }
 
-  console.log(`ROM ${rom._attributes.name} with name ${rom.description._text} was skipped because rom status=${rom.driver._attributes.status}`);
+  console.log(`ROM ${rom._attributes.name} with name ${rom.description._text} was skipped because rom status=${romStatus}`);
   return false;
 }
 
@@ -311,7 +316,7 @@ function romMapper (rom, gameSettings, extraSettings, extraFilters, romsWithCate
 function excludeRomsRegions (webSocket, romsFromXML, excludeRegions, gameDuplicates) {
   let roms = [];
   if (gameDuplicates) {
-    sendWsSignal(webSocket, `Preparing to apply 'Exclude Region (Duplicates)' filter to remove all duplicates and keeping only one rom`);
+    sendWsSignal(webSocket, `Preparing to apply 'Exclude Region (Duplicates)' filter to remove all duplicates and keeping only one rom ...`);
 
     // map roms with same name
     const romsGrouped = new Map();

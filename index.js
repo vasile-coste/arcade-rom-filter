@@ -123,10 +123,10 @@ wsServer.on('connection', (ws) => {
 
     switch (message.event) {
       case 'filterRoms':
-        await FilterRoms(message.data, ws);;
+        await FilterRoms(message.data, ws);
         break;
       case 'copyRoms':
-        await CopyRoms(message.data, ws);;
+        await CopyRoms(message.data, ws);
         break;
       case 'exit':
         process.kill(process.pid, 'SIGTERM');
