@@ -11,7 +11,7 @@ const { WebSocketServer } = require('ws');
 let bodyParser = require('body-parser');
 
 // include scripts
-const { CheckFiles, FilterMame, FilterFBNeo, CopyRoms, CheckPrevJson } = require('./events/index.js');
+const { CheckFiles, FilterRoms, CopyRoms, CheckPrevJson } = require('./events/index.js');
 
 // creat app
 const app = Express();
@@ -122,11 +122,8 @@ wsServer.on('connection', (ws) => {
     // Theres no file handler, soo...
 
     switch (message.event) {
-      case 'filterMame':
-        await FilterMame(message.data, ws);;
-        break;
-      case 'filterFBNeo':
-        await FilterFBNeo(message.data, ws);;
+      case 'filterRoms':
+        await FilterRoms(message.data, ws);;
         break;
       case 'copyRoms':
         await CopyRoms(message.data, ws);;
