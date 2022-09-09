@@ -275,7 +275,7 @@ function romMapperM (rom, romsWithCategory, gameSettings, extraSettings, extraFi
         (extraFilters.length > 0 && checkExtraFilters.length == 0)
       ) {
         console.log(`ROM ${rom._attributes.name} with name ${rom.description._text} was added!`);
-        const groupArr = rom.description._text.split('(');
+        const groupArr = rom.description._text == 'Double Dragon (Neo-Geo)' ? [rom.description._text] : rom.description._text.split('(');
         return {
           rom: rom._attributes.name + '.zip',
           name: rom.description._text,
@@ -328,7 +328,7 @@ function romMapperD (rom, romsWithCategory, gameSettings, extraSettings, extraFi
         (extraFilters.length > 0 && checkExtraFilters.length == 0)
       ) {
         console.log(`ROM ${rom._attributes.name} with name ${rom.description._text} was added!`);
-        const groupArr = rom.description._text.split('(');
+        const groupArr = rom.description._text == 'Double Dragon (Neo-Geo)' ? [rom.description._text] : rom.description._text.split('(');
         return {
           rom: rom._attributes.name + '.zip',
           name: rom.description._text,
