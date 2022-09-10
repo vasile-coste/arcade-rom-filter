@@ -120,7 +120,11 @@
                 <label class="cursor-pointer" for="toggle-game-clones">Toggle All</label>
               </div>
               <div class="ml-2">
-                <input class="w-full border-2 rounded-md" type="text" v-model="findClones" placeholder="Find...">
+                <input class="w-full border-2 rounded-md px-1" type="text" v-model="findClones" placeholder="Find...">
+              </div>
+              <div class="ml-2">
+                <input class="border-2 rounded-md px-1" type="text" v-model="extraFilter" placeholder="Add...">
+                <button class="rounded-md bg-gray-200 px-2 py-1" @click="addExtraFilter">Add Extra Filter</button>
               </div>
             </div>
             <div class="grid grid-cols-3 h-56 my-2 overflow-y-auto">
@@ -170,6 +174,7 @@
       el: "#app",
       data: {
         // UI
+        extraFilter: null,
         emulator: null,
         jsonConfigRom: false,
         showLogs: false,
@@ -221,6 +226,10 @@
         },
       },
       methods: {
+        addExtraFilter() {
+          this.extraFilters = [this.extraFilter].concat(this.extraFilters);
+          this.extraFilter = null;
+        },
         changeFilters () {
           this.showLogs = false;
         },
@@ -247,7 +256,8 @@
           }
 
           // save data to local storage
-          localStorage.setItem('filterSettings', JSON.stringify(selectedFilters));
+          localStorage.setItem('selectedFilters', JSON.stringify(selectedFilters));
+          localStorage.setItem('extraFilters', JSON.stringify(this.extraFilters));
 
           this.showLogs = true;
 

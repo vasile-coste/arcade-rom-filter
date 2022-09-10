@@ -1,6 +1,8 @@
 
 function mameSettings () {
-  const prevData = localStorage.getItem('filterSettings') ? JSON.parse(localStorage.getItem('filterSettings')) : null; 
+  const selectedFilters = localStorage.getItem('selectedFilters') ? JSON.parse(localStorage.getItem('selectedFilters')) : null;
+  const extraFilters = localStorage.getItem('extraFilters') ? JSON.parse(localStorage.getItem('extraFilters')) : null;
+  
   return {
     categoriesMap: { "Maze": ["Shooter Small", "Collect", "Change Surface", "Shooter Large", "Outline", "Surround", "Escape", "Collect & Put", "Digging", "Blocks", "Cross", "Ladders", "Driving", "Defeat Enemies", "Paint", "Fighter", "Move and Sort", "Integrate", "Collect * Mature *", "Ball Guide", "Escape * Mature *", "Misc.", "Driving * Mature *", "Digging * Mature *", "Run Jump"], "System": ["Device", "BIOS"], "Slot Machine": ["Video Slot", "Reels", "Video Slot * Mature *"], "Sports": ["Football", "Soccer", "Basketball", "Baseball", "Wrestling", "Tennis", "Skateboarding", "Track & Field", "Pool", "Volleyball", "Fishing", "Golf", "Bowling", "Skiing", "Darts", "Hockey", "Misc.", "Horse Racing", "Armwrestling", "Boxing", "Pool * Mature *", "Multiplay", "Bull Fighting", "Sumo", "Rugby Football", "Cards", "Hang Gliding", "Roller", "Horseshoes", "Handball", "Volley - Soccer", "Dodgeball", "Ping Pong", "SkyDiving", "Shuffleboard", "Swimming", "Gun"], "Handheld": ["Plug n' Play TV Game / Music", "Plug n' Play TV Game / Multi-Games", "Plug n' Play TV Game / Fighting", "Plug n' Play TV Game / Pinball", "Plug n' Play TV Game / Multi-Sport", "Plug n' Play TV Game / Tennis", "Plug n' Play TV Game / Shoot 'em Up", "Electronic Game", "Pocket Device - Pad - PDA", "Plug n' Play TV Game / Fishing", "Home Videogame Console", "Plug n' Play TV Game / Quiz", "Plug n' Play TV Game / Driving", "Child Computer", "Plug n' Play TV Game / TV Show", "Plug n' Play TV Game / Ping Pong", "Plug n' Play TV Game / Dance", "Plug n' Play TV Game", "Plug n' Play TV Game / Role Playing", "Plug n' Play TV Game / Action", "Plug n' Play TV Game / Fashion", "Plug n' Play TV Game / Bowling", "Plug n' Play TV Game / Baseball", "Plug n' Play TV Game / Mini-Golf", "Horoscope", "Educational Game", "Plug n' Play TV Game / Hunting", "Plug n' Play TV Game / Golf", "Plug n' Play TV Game / Wrestling", "Plug n' Play TV Game / Casino", "Console Cartridge", "Pocket Electronic Game", "Plug n' Play TV Game / Fitness", "Plug n' Play TV Game / Maze", "Plug n' Play TV Game / Shooter", "Plug n' Play TV Game / Sudoku", "Barcode Scanner", "Plug n' Play TV Game / Puzzle", "Plug n' Play TV Game / Basketball", "Plug n' Play TV Game / Boxe", "Plug n' Play TV Game / Criket", "Plug n' Play TV Game / Football", "Plug n' Play TV Game / Compilation", "Plug n' Play TV Game / Snowboard", "Plug n' Play TV Game / Skateboard", "Plug n' Play TV Game / Soccer", "E-Book Reading", "Plug n' Play TV Game / Board Game", "Plug n' Play TV Game / Reader", "Plug n' Play TV Game / Trail", "Plug n' Play TV Game / Painting", "Handpuppet Toy"], "Game Console": ["Home Videogame", "Multi-Games", "Fitness Game", "Gambling", "Home Videogame Console Expansion"], "Electromechanical": ["Misc.", "Pinball", "Crane Machine", "Reels", "Basketball", "Bingo", "Coin-Operated Rocking Games", "Shooting", "Beat Up", "Utilities", "Darts", "Skill", "Shooter", "Hockey", "Change Money", "Bowling"], "Driving": ["Truck Guide", "1st Person", "Motorbike", "Race 1st Person", "Race (chase view)", "Plane", "Race Track", "Misc.", "Boat", "Race (chase view) Bike", "Race", "Race Bike", "Demolition Derby", "Ambulance Guide", "FireTruck Guide", "Motorbike (Motocross)", "Guide and Collect", "Landing", "Guide and Shoot", "Catch"], "Shooter": ["Flying Vertical", "Gun", "Field", "Flying Horizontal", "Misc. Horizontal", "Gallery", "Flying (chase view)", "Misc. Vertical", "Flying 1st Person", "1st Person", "3rd Person", "Misc.", "Walking", "Flying", "Driving (chase view)", "Driving", "Driving Vertical", "2.5D", "Driving Diagonal", "Versus", "Flying * Mature *", "Driving Horizontal", "Driving 1st Person", "Command", "Gallery * Mature *", "Flying Diagonal", "Submarine", "Motorbike", "Outline * Mature *", "Flying Horizontal * Mature *", "Underwater", "Flying Vertical * Mature *"], "MultiGame": ["Compilation", "Mini-Games", "Gambling", "Gambling Board", "Compilation * Mature *"], "Music": ["JukeBox", "MIDI Sound Generator", "Drum Machine", "Synthesizer", "Sound Module", "Storage Media", "Audio Sequencer", "Keyboard", "Vocoder - Harmonizer", "Karaoke Machine", "Sampler Editor", "Instruments", "Synthesizer Module", "Sequencer", "Guitar Effects", "Audio Chip Emulator", "Guitar Synthesizer", "Digital Piano", "Guitar Synthesizer Module", "Workstation", "Tone Generator", "Drum Machine Module", "Misc.", "Electronic Piano", "MIDI Player", "Player"], "Computer": ["Workstation - Server", "Business - Terminal", "Single Board", "Training Board", "Home System", "Portable Digital Teletype", "Construction Kit", "Misc.", "Development System", "Microcomputer", "Punched Car", "Word-processing Machine", "Graphic Terminal", "Laptop - Notebook - Portable", "Cablenet Controller", "Child Computer", "TeleText Terminal", "Protocol Analyzer", "TTL", "Pocket PC", "Pocket Computer", "Workstation", "Video Production", "Educational Game", "Milling", "Graphics Workstation", "Programming Machine"], "Casino": ["Cards", "Misc.", "Multiplay", "Bingo", "Racing", "Lottery", "Cards * Mature *", "Unknown", "BlackJack", "Roulette", "Misc. * Mature *", "Dice", "Horse Racing", "Multi-Games", "Video Slot", "Skill Game"], "Puzzle": ["Match * Mature *", "Match", "Sliding", "Drop", "Toss", "Drop * Mature *", "Maze", "Misc.", "Toss * Mature *", "Reconstruction", "Outline", "Outline * Mature *", "Reconstruction * Mature *", "Paint * Mature *", "Misc. * Mature *", "Sliding * Mature *", "Cards"], "Misc.": ["Clock", "Print Club", "Coin Pusher", "Toy Robot", "Multiplay", "Catch", "Bank-teller Terminal", "Electronic Board Game", "Laserdisc Simulator", "Teletype", "Document Processors", "Toy Cars", "Spank * Mature *", "Device Programmer", "Cash Counter", "Unknown", "Electronic Typewriter", "Fingerprint Reader", "Jump and Bounce", "Satellite Receiver", "Speech Synthesizer", "Prediction", "EPROM Programmer", "Engine Control Unit", "Graphics Display Controller", "Dartboard", "Electronic Game", "Wavetables Generator", "Car Voice Alert", "Mini-Games", "Similar Bowling Game", "Pachinko", "Digital MultiMeter (DMM)", "Drum Machine", "Dog Sitter", "Gambling Board", "Educational Game", "Versus", "Response Time", "DVD Reader-Writer", "In Circuit Emulator", "Time-Access Control Terminal", "Virtual Environment", "VTR Control", "Hot-air Balloon", "Shoot Photos", "Portable Media Player", "Graphic Tablet", "Robot Control", "Temperature Controller", "DVD Player", "Order", "Dot-Matrix Display", "Credit Card Terminal", "Laserdisc Player"], "Tabletop": ["Mahjong * Mature *", "Cards", "Hanafuda * Mature *", "Mahjong", "Misc.", "Multiplay", "Othello - Reversi * Mature *", "Hanafuda", "Multi-Games", "Match * Mature *", "Renju", "Go", "Shougi", "Othello - Reversi"], "Fighter": ["2.5D", "Versus", "2D", "3D", "Vertical", "Versus * Mature *", "Misc.", "Field", "Compilation", "Driving Vertical", "Versus Co-op", "Multiplay"], "Utilities": ["EPROM Programmer", "Modem", "Network Controller", "Monitor", "Disk Unit", "Test", "Update", "On-board BUS Ticketing", "Devices Communication", "Tobacco Vending Machine", "Video Switcher", "Arcade System", "Network Processor", "Speech Synthesizer", "Redemption Board", "Thermometer", "Light Gun", "Weather Station", "Analog Filter Module", "Test ROM", "Videosynthesizer", "PAL Demo", "Weight Scale", "Arcade Switcher", "Electronic Digital Thermostat", "TV Test Pattern Generator", "Videocassette Player/Recorder", "Robot Control", "Wave Synthesizer", "Weather Forecast Machine", "Clock"], "Quiz": ["Questions in Japanese", "Questions in English", "Questions in English * Mature *", "Questions in Korean", "Questions in Italian", "Questions in German", "Questions in Japanese * Mature *", "Hangman game", "Questions in Greek", "Questions in Spanish", "Questions in Chinese", "Questions in French", "Questions in Norwegian"], "Platform": ["Run Jump", "Shooter Scrolling", "Fighter Scrolling", "Run, Jump & Scrolling", "Fighter", "Shooter", "Run Jump * Mature *", "Maze"], "Board Game": ["Chess Machine", "Backgammon", "Bridge Machine", "Checker Machine", "Dame Machine", "Cards"], "Medal Game": ["Stone-Scissor-Paper", "Action", "Misc.", "Bingo", "Casino", "Powerboat Racing", "Sport", "Adventure", "Timing", "Horse Racing", "Baseball", "Aquarium", "Versus", "Coin Pusher", "Driving", "Compilation", "Pinball", "Cards", "Dance"], "Calculator": ["Pocket Computer", "Astrological Computer", "Desktop Electronic Calculator", "Pocket Calculator", "Math Game Learning", "Electronic Organizer", "Chemical Calculations", "Talking Calculator"], "Arcade": ["Pinball", "Pinball * Mature *"], "Telephone": ["Car Phone", "Landline Phone", "ComputerPhone", "Mobile Phone - Smartphone", "Landline phone"], "Climbing": ["Tree - Plant", "Building", "Mountain - Wall"], "Whac-A-Mole": ["Hammer", "Shooter", "Fighter", "Gun", "Footsteps"], "Redemption Game": ["Action", "Shooter", "Crane Machine", "Driving", "Reaction", "Flying", "Soccer", "Pinball"], "TTL * Shooter": ["Gallery", "Versus", "Flying Vertical", "Gun", "Flying 1st Person", "Field", "Underwater", "Misc. Vertical"], "Ball & Paddle": ["Breakout", "Breakout * Mature *", "Pong", "Jump and Touch", "Misc."], "Music Game": ["Dance", "Instruments", "Misc."], "TTL * Sports": ["Baseball", "Horse Racing"], "Multiplay": ["Mini-Games", "Compilation", "Misc. * Mature *", "Mini-Games * Mature *", "Misc."], "TTL * Ball & Paddle": ["Breakout", "Pong"], "Medical Equipment": ["Visual Field Screener", "ECG Unit"], "TTL * Driving": ["Demolition Derby", "Race Track", "Motorbike", "Race"], "Digital Simulator": ["Aquarium"], "Printer": ["Matrix Printer", "Handbook", "Laser Printer", "3D Printer", "Thermal Printer", "Barcode Printer"], "Game": ["Gambling"], "Simulation": ["Pet Management Simulation"], "Computer Graphic Workstation": ["Broadcast Television"], "Tablet": ["Multi-Functional for Children"], "Watch": ["LCD Game"], "Touchscreen": ["Multi-Games"], "TTL * Maze": ["Shooter Small"], "TTL * Quiz": ["Questions in English"] },
     mainCategories: ["Arcade", "Ball & Paddle", "Board Game", "Calculator", "Casino", "Climbing", "Computer", "Computer Graphic Workstation", "Digital Simulator", "Driving", "Electromechanical", "Fighter", "Game", "Game Console", "Handheld", "Maze", "Medal Game", "Medical Equipment", "Misc.", "MultiGame", "Multiplay", "Music", "Music Game", "Platform", "Printer", "Puzzle", "Quiz", "Redemption Game", "Shooter", "Simulation", "Slot Machine", "Sports", "System", "TTL * Ball & Paddle", "TTL * Driving", "TTL * Maze", "TTL * Quiz", "TTL * Shooter", "TTL * Sports", "Tablet", "Tabletop", "Telephone", "Touchscreen", "Utilities", "Watch", "Whac-A-Mole"],
@@ -25,7 +27,7 @@ function mameSettings () {
       'playchoice-10',
     ],
     // extra filters, games considered clones, games you want to remove for no reason
-    extraFilters: [
+    extraFilters: extraFilters ? extraFilters : [
       "1943 Kai: Midway Kaisen",
       "1943: Battle of Midway",
       "1943: Midway Kaisen",
@@ -183,13 +185,13 @@ function mameSettings () {
       "unknown fighting game",
     ],
     // logics selected items from list
-    selectedCategories: prevData ? prevData.categories : [
+    selectedCategories: selectedFilters ? selectedFilters.categories : [
       "Arcade",
       "Fighter",
       "Platform",
       "Shooter",
     ],
-    selectedSubCategories: prevData ? prevData.subCategories : [
+    selectedSubCategories: selectedFilters ? selectedFilters.subCategories : [
       '2.5D',
       '2D',
       'Action',
@@ -206,7 +208,7 @@ function mameSettings () {
       'Versus Co-op',
       'Vertical'
     ],
-    selectedRegions: prevData ? prevData.excludeRegions : [
+    selectedRegions: selectedFilters ? selectedFilters.excludeRegions : [
       'asia',
       'china',
       'germany',
@@ -219,20 +221,20 @@ function mameSettings () {
       'switzerland',
       'taiwan'
     ],
-    gameSettings: prevData ? prevData.gameSettings : {
+    gameSettings: selectedFilters ? selectedFilters.gameSettings : {
       gameClones: true,
       gameDuplicates: true,
       gameGood: true,
       gameImperfect: false,
       gamePreliminary: false
     },
-    selectedExtraSettings: prevData ? prevData.extraSettings : [
+    selectedExtraSettings: selectedFilters ? selectedFilters.extraSettings : [
       'prototype',
       'bootleg',
       'hack',
       'playchoice-10',
     ],
-    selectedExtraFilters: prevData ? prevData.extraFilters : [
+    selectedExtraFilters: selectedFilters ? selectedFilters.extraFilters : [
       "1943 Kai: Midway Kaisen",
       "1943: Battle of Midway",
       "1943: Midway Kaisen",

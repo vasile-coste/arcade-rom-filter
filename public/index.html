@@ -162,7 +162,8 @@
           // set selected emulator
           localStorage.setItem('emulator', this.emulator);
           // reset prev data, will be set on next screen
-          localStorage.removeItem('filterSettings');
+          localStorage.removeItem('selectedFilters');
+          localStorage.removeItem('extraFilters');
 
           // next page
           location.href = `/filter-${this.emulator}-roms.html`;

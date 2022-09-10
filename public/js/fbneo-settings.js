@@ -1,6 +1,8 @@
 
 function fbneoSettings () {
-  const prevData = localStorage.getItem('filterSettings') ? JSON.parse(localStorage.getItem('filterSettings')) : null; 
+  const selectedFilters = localStorage.getItem('selectedFilters') ? JSON.parse(localStorage.getItem('selectedFilters')) : null;
+  const extraFilters = localStorage.getItem('extraFilters') ? JSON.parse(localStorage.getItem('extraFilters')) : null;
+
   return {
     regions: [
       'asia',
@@ -22,7 +24,7 @@ function fbneoSettings () {
       'playchoice-10',
     ],
     // extra filters, games considered clones, games you want to remove for no reason
-    extraFilters: [
+    extraFilters: extraFilters ? extraFilters : [
       "1943 Kai: Midway Kaisen",
       "1943: Battle of Midway",
       "1943: Midway Kaisen",
@@ -180,7 +182,7 @@ function fbneoSettings () {
       "unknown fighting game",
     ],
     // logics selected items from list
-    selectedRegions: prevData ? prevData.excludeRegions : [
+    selectedRegions: selectedFilters ? selectedFilters.excludeRegions : [
       'asia',
       'china',
       'germany',
@@ -193,20 +195,20 @@ function fbneoSettings () {
       'switzerland',
       'taiwan'
     ],
-    gameSettings: prevData ? prevData.gameSettings : {
+    gameSettings: selectedFilters ? selectedFilters.gameSettings : {
       gameClones: true,
       gameDuplicates: true,
       gameGood: true,
       gameImperfect: false,
       gamePreliminary: false
     },
-    selectedExtraSettings: prevData ? prevData.extraSettings : [
+    selectedExtraSettings: selectedFilters ? selectedFilters.extraSettings : [
       'prototype',
       'bootleg',
       'hack',
       'playchoice-10',
     ],
-    selectedExtraFilters: prevData ? prevData.extraFilters : [
+    selectedExtraFilters: selectedFilters ? selectedFilters.extraFilters : [
       "1943 Kai: Midway Kaisen",
       "1943: Battle of Midway",
       "1943: Midway Kaisen",
