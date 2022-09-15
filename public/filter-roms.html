@@ -369,7 +369,7 @@
           });
         },
         filterRoms () {
-          if (this.selectedSubCategories.length == 0) {
+          if (this.selectedSubCategories.length == 0 && this.emulator == 'mame') {
             alert('Please select a sub category!');
             return false;
           }
