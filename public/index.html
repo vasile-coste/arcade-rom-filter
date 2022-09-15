@@ -13,113 +13,143 @@
 
 <body>
 
-  <div class="bg-gray-50 mx-auto py-2 -px-2 px-2 h-screen flex flex-col justify-between" id="app">
+  <div class="bg-gray-50 mx-auto h-screen flex flex-col justify-between" id="app">
 
     <div class="w-full overflow-auto max-h-screen">
-      <div class="py-2 text-2xl font-semibold">
-        Select destination emulator
-      </div>
-
-      <div class="w-full border-2">
-        <div class="flex" v-for="(emu, index) in emulators" :key="index">
-          <input :id="'emu-'+index" type="radio" v-model="emulator" :value="emu.value" class="hidden">
-          <label :for="'emu-'+index" :class="[emulator == emu.value ? 'bg-blue-600' : 'bg-gray-50']"
-            class="w-full px-4 py-3 cursor-pointer">
-            {{emu.name}}
-          </label>
-        </div>
-      </div>
-
-      <!-- success/error messages-->
-      <div :class=" [isSuccess ? 'bg-green-600' : 'bg-yellow-600' ]"
-        class="w-full mt-4 p-2 text-sm font-semibold text-white" v-if="messages.length">
-        <div v-for="msg in messages">{{msg}}</div>
-      </div>
-
-      <!-- select file for mame -->
-      <div class="w-full mt-2" v-if="emulator == 'mame'">
-        <div class="py-2 text-2xl font-semibold">
-          Select .XML/.DAT and .INI files
-        </div>
-        <div class="text-sm">
-          Can be XML downloaded from
-          <a class="text-blue-700 font-semibold" href="https://www.mamedev.org/release.html" target="_blank">
-            here
-          </a>
-          <br />
-          Can be INI downloaded from
-          <a class="text-blue-700 font-semibold"
-            href="https://raw.githubusercontent.com/mamesupport/catver.ini/master/catver.ini" target="_blank">
-            here
-          </a>
-          or
-          <a class="text-blue-700 font-semibold" href="https://emulationrealm.net/downloads/file/2831-catlist-catver"
-            target="_blank">
-            here
-          </a>
-        </div>
-        <div class="w-full border-2 px-2 py-3">
-          <div class="flex">
-            <input class="hidden" type="file" @change="uploadMameXML" id="mame_xml" accept=".xml,.dat">
-            <label class="cursor-pointer bg-blue-700 text-white flex items-center justify-center w-48 text-center"
-              for="mame_xml">
-              Choose .XML/.DAT
-            </label>
-
-            <div class="progress-wrp w-full" id="mame_xml-progress">
-              <div class="progress-bar"></div>
-              <div class="status">0%</div>
-            </div>
-          </div>
-          <div class="flex mt-1">
-            <input class="hidden" type="file" @change="uploadMameINI" id="mame_ini" accept=".ini">
-            <label class="cursor-pointer bg-blue-700 text-white flex items-center justify-center w-48 text-center"
-              for="mame_ini">
-              Choose catver.ini
-            </label>
-
-            <div class="progress-wrp w-full" id="mame_ini-progress">
-              <div class="progress-bar"></div>
-              <div class="status">0%</div>
-            </div>
+      <div class="bg-gray-800">
+        <div class="flex">
+          <div class="px-4 flex items-center text-white font-semibold text-xl h-12 mr-4">
+            Arcade roms filter
           </div>
         </div>
       </div>
+      <div class="grid gap-2 grid-cols-2 px-2">
+        <div>
+          <div class="py-2 text-2xl font-semibold">
+            Select emulator
+          </div>
 
-      <!-- select file for fbneo -->
-      <div class="w-full mt-2" v-if="emulator == 'fbneo'">
-        <div class="py-2 text-2xl font-semibold">
-          Select .XML/.DAT file
-        </div>
-        <div class="text-sm">
-          Can be XML downloaded from
-          <a class="text-blue-700 font-semibold"
-            href=https://github.com/libretro/FBNeo/blob/master/dats/FinalBurn%20Neo%20(ClrMame%20Pro%20XML%2C%20Arcade%20only).dat"
-            target="_blank">
-            here
-          </a>
-        </div>
-        <div class="w-full border-2 px-2 py-3">
-          <div class="flex">
-            <input class="hidden" type="file" @change="uploadFBneoXML" id="fbneo_xml" accept=".xml,.dat">
-            <label class="cursor-pointer bg-blue-700 text-white flex items-center justify-center w-48" for="fbneo_xml">
-              Choose .XML/.DAT
-            </label>
+          <div class="w-full border-2">
+            <div class="flex" v-for="(emu, index) in emulators" :key="index">
+              <input :id="'emu-'+index" type="radio" v-model="emulator" :value="emu.value" class="hidden">
+              <label :for="'emu-'+index" :class="[emulator == emu.value ? 'bg-blue-600' : 'bg-gray-50']"
+                class="w-full px-4 py-3 cursor-pointer">
+                {{emu.name}}
+              </label>
+            </div>
+          </div>
 
-            <div class="progress-wrp w-full" id="fbneo_xml-progress">
-              <div class="progress-bar"></div>
-              <div class="status">0%</div>
+          <div class="mt-2">
+            For roms and dat files you can also check
+            <a class="text-blue-700 font-semibold" href="https://pleasuredome.github.io/pleasuredome/mame/index.html"
+              target="_blank">
+              this link
+            </a>
+            and
+            <a class="text-blue-700 font-semibold" href="https://r-roms.github.io/megathread/retro/" target="_blank">
+              this link
+            </a>!
+          </div>
+        </div>
+        <div v-if="emulator">
+          <div class="py-2 text-2xl font-semibold">
+            Upload necesary files if needed
+          </div>
+
+          <!-- success/error messages-->
+          <div :class="[isSuccess ? 'bg-green-600' : 'bg-yellow-600' ]"
+            class="w-full p-2 text-sm font-semibold text-white" v-if="messages.length">
+            <div v-for="msg in messages">{{msg}}</div>
+          </div>
+
+          <!-- select file for mame -->
+          <div class="w-full" v-if="emulator == 'mame'">
+            <div class="py-2 text-xl font-semibold">
+              Select .XML/.DAT and .INI files
+            </div>
+            <div class="text-sm">
+              Can be XML downloaded from
+              <a class="text-blue-700 font-semibold" href="https://www.mamedev.org/release.html" target="_blank">
+                here
+              </a>
+              <br />
+              Can be INI downloaded from
+              <a class="text-blue-700 font-semibold"
+                href="https://raw.githubusercontent.com/mamesupport/catver.ini/master/catver.ini" target="_blank">
+                here
+              </a>
+              or
+              <a class="text-blue-700 font-semibold"
+                href="https://emulationrealm.net/downloads/file/2831-catlist-catver" target="_blank">
+                here
+              </a>
+            </div>
+            <div class="w-full border-2 px-2 py-3 mt-2">
+              <div class="flex">
+                <input class="hidden" type="file" @change="uploadMameXML" id="mame_xml" accept=".xml,.dat">
+                <label class="cursor-pointer bg-blue-700 text-white flex items-center justify-center w-48 text-center"
+                  for="mame_xml">
+                  Choose .XML/.DAT
+                </label>
+
+                <div class="progress-wrp w-full" id="mame_xml-progress">
+                  <div class="progress-bar"></div>
+                  <div class="status">0%</div>
+                </div>
+              </div>
+              <div class="flex mt-1">
+                <input class="hidden" type="file" @change="uploadMameINI" id="mame_ini" accept=".ini">
+                <label class="cursor-pointer bg-blue-700 text-white flex items-center justify-center w-48 text-center"
+                  for="mame_ini">
+                  Choose catver.ini
+                </label>
+
+                <div class="progress-wrp w-full" id="mame_ini-progress">
+                  <div class="progress-bar"></div>
+                  <div class="status">0%</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- select file for fbneo -->
+          <div class="w-full" v-if="emulator == 'fbneo'">
+            <div class="py-2 text-xl font-semibold">
+              Select .XML/.DAT file
+            </div>
+            <div class="text-sm">
+              Can be XML downloaded from
+              <a class="text-blue-700 font-semibold"
+                href=https://github.com/libretro/FBNeo/blob/master/dats/FinalBurn%20Neo%20(ClrMame%20Pro%20XML%2C%20Arcade%20only).dat"
+                target="_blank">
+                here
+              </a>
+            </div>
+            <div class="w-full border-2 px-2 py-3 mt-2">
+              <div class="flex">
+                <input class="hidden" type="file" @change="uploadFBneoXML" id="fbneo_xml" accept=".xml,.dat">
+                <label class="cursor-pointer bg-blue-700 text-white flex items-center justify-center w-48"
+                  for="fbneo_xml">
+                  Choose .XML/.DAT
+                </label>
+
+                <div class="progress-wrp w-full" id="fbneo_xml-progress">
+                  <div class="progress-bar"></div>
+                  <div class="status">0%</div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
+
 
     </div>
 
     <!-- continue to next step -->
-    <div class="flex pt-4 justify-end">
+    <div class="flex justify-end p-2">
       <button :disabled="!isSuccess"
-        class="bg-green-600 px-4 py-2 text-white rounded-md mr-4 disabled:bg-gray-200 disabled:text-black disabled:cursor-not-allowed"
+        class="bg-green-600 px-4 py-2 text-white rounded-md disabled:bg-gray-200 disabled:text-black disabled:cursor-not-allowed"
         @click="setEmulator()">
         Continue
       </button>
@@ -166,7 +196,7 @@
           localStorage.removeItem('extraFilters');
 
           // next page
-          location.href = `/filter-${this.emulator}-roms.html`;
+          location.href = `/filter-roms.html`;
         },
         async checkFiles () {
           this.messages = [];

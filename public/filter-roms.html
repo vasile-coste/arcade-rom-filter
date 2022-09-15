@@ -36,23 +36,47 @@
         </div>
       </div>
     </div>
-    <div v-else class="h-screen mx-auto py-2 -px-2 px-2 flex flex-col justify-between">
-      <!-- filters -->
-      <div class="w-full overflow-auto max-h-screen">
-        <div class="py-1 text-2xl font-semibold">
-          Filter mame roms
-        </div>
-
-        <div class="flex flex-row">
-          <!-- Main Categories -->
-          <div class="w-full border-2 p-1">
-            <div class="text-lg font-semibold">Main Categories*</div>
-            <div class="italic text-xs">Select which game category you want to keep</div>
-            <div class="w-full">
-              <input type="checkbox" v-model="toggleCategories" id="toggle-categories">
-              <label class="cursor-pointer" for="toggle-categories">Toggle All</label>
+    <div v-else class="h-screen mx-auto flex flex-col justify-between">
+      <div class="bg-gray-800">
+        <div class="flex">
+          <div class="px-4 flex items-center h-14 mr-4">
+            <div class="text-white">
+              <div class="font-semibold text-xl">Filter {{emulator}} roms</div>
+              <div class="italic text-xs">Make sure you go trough all options</div>
             </div>
-            <div class="w-full h-56 my-2 overflow-y-auto">
+          </div>
+          <button v-if="emulator == 'mame'"
+            :class="[currentTab == 'categories' ? 'bg-blue-700 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white']"
+            class="px-4 py-2 text-sm font-medium" @click="currentTab = 'categories'">
+            Categories
+          </button>
+          <button
+            :class="[currentTab == 'settings' ? 'bg-blue-700 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white']"
+            class="px-4 py-2 text-sm font-medium" @click="currentTab = 'settings'">
+            Settings and Regions
+          </button>
+          <button
+            :class="[currentTab == 'extra' ? 'bg-blue-700 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white']"
+            class="px-4 py-2 text-sm font-medium" @click="currentTab = 'extra'">
+            Extra filters
+          </button>
+        </div>
+      </div>
+
+      <!-- filters -->
+      <div class="w-full h-screen overflow-auto px-2">
+        <div class="flex flex-row" v-if="currentTab == 'categories'">
+          <!-- Main Categories -->
+          <div class="w-full border-2">
+            <div class="h-24 w-full sticky top-0 bg-gray-200 p-1">
+              <div class="text-lg font-semibold">Main Categories*</div>
+              <div class="italic text-xs">Select which game category you want to keep</div>
+              <div class="w-full">
+                <input type="checkbox" v-model="toggleCategories" id="toggle-categories">
+                <label class="cursor-pointer" for="toggle-categories">Toggle All</label>
+              </div>
+            </div>
+            <div class="w-full my-2 overflow-auto p-1">
               <div class="w-full hover:bg-gray-200 px-1" v-for="(item, cnt) in mainCategories">
                 <input type="checkbox" v-model="selectedCategories" :value="item" :id="'cat-' + cnt">
                 <label class="cursor-pointer" :for="'cat-'+cnt">{{item}}</label>
@@ -60,19 +84,21 @@
             </div>
           </div>
           <!-- Sub Categories -->
-          <div class="w-full border-2 p-1">
-            <div class="text-lg font-semibold">Sub Categories*</div>
-            <div class="italic text-xs">Select which game sub category you want to keep</div>
-            <div class="flex flex-row">
-              <div class="w-1/2">
-                <input type="checkbox" v-model="toggleSubCategories" id="toggle-sub-categories">
-                <label class="cursor-pointer" for="toggle-sub-categories">Toggle All</label>
-              </div>
-              <div class="w-1/2">
-                <input class="w-full border-2 rounded-md" type="text" v-model="findSubCategory" placeholder="Find...">
+          <div class="w-full border-2">
+            <div class="h-24 w-full sticky top-0 bg-gray-200 p-1">
+              <div class="text-lg font-semibold">Sub Categories*</div>
+              <div class="italic text-xs">Select which game sub category you want to keep</div>
+              <div class="flex flex-row">
+                <div class="w-1/2">
+                  <input type="checkbox" v-model="toggleSubCategories" id="toggle-sub-categories">
+                  <label class="cursor-pointer" for="toggle-sub-categories">Toggle All</label>
+                </div>
+                <div class="w-1/2">
+                  <input class="w-full border-2 rounded-md" type="text" v-model="findSubCategory" placeholder="Find...">
+                </div>
               </div>
             </div>
-            <div class="w-full h-56 my-2 overflow-y-auto">
+            <div class="w-full my-2 overflow-auto p-1">
               <div :class="{'hidden' : findSubCategory && !item.toLowerCase().includes(findSubCategory.toLowerCase()) }"
                 class="w-full hover:bg-gray-200 px-1" v-for="(item, cnt) in subCategories">
                 <input type="checkbox" v-model="selectedSubCategories" :value="item" :id="'subcat-' + cnt">
@@ -80,11 +106,16 @@
               </div>
             </div>
           </div>
+        </div>
+
+        <div class="flex flex-row" v-if="currentTab == 'settings'">
           <!-- Games Settings -->
-          <div class="w-full border-2 p-1">
-            <div class="text-lg font-semibold">Games Settings</div>
-            <div class="italic text-xs">Check/uncheck what you need</div>
-            <div class="w-full h-56 my-2 overflow-y-auto">
+          <div class="w-full border-2">
+            <div class="h-24 w-full sticky top-0 bg-gray-200 p-1">
+              <div class="text-lg font-semibold">Games Settings</div>
+              <div class="italic text-xs">Check/uncheck what you need</div>
+            </div>
+            <div class="w-full my-2 overflow-y-auto p-1">
               <div class="w-full hover:bg-gray-200 px-1">
                 <input type="checkbox" v-model="gameSettings.gameClones" id="game-gameClones">
                 <label for="game-gameClones">Remove Clones</label>
@@ -109,61 +140,70 @@
             </div>
           </div>
           <!-- extra game settings -->
-          <div class="w-full border-2 p-1">
-            <div class="text-lg font-semibold">Extra Settings</div>
-            <div class="italic text-xs">Check/uncheck what manufacturer you want to remove</div>
-            <div class="w-full h-56 my-2 overflow-y-auto">
+          <div class="w-full border-2">
+            <div class="h-24 w-full sticky top-0 bg-gray-200 p-1">
+              <div class="text-lg font-semibold">Extra Settings</div>
+              <div class="italic text-xs">Check/uncheck what manufacturer you want to remove</div>
+            </div>
+            <div class="w-full my-2 overflow-y-auto p-1">
               <div class="w-full hover:bg-gray-200 px-1" v-for="(item, cnt) in excludeGamesContaining">
                 <input type="checkbox" v-model="selectedExtraSettings" :value="item" :id="'extragame-' + cnt">
                 <label class="cursor-pointer" :for="'extragame-'+cnt">Remove manufacturer with {{item}}</label>
               </div>
             </div>
           </div>
-        </div>
-
-        <div class="flex flex-row mt-1">
           <!-- Exclude Region -->
-          <div class="w-80 border-2 p-1">
-            <div class="text-lg font-semibold">
-              Exclude Region
-              <span v-if="gameSettings.gameDuplicates">(Duplicates)</span>
+          <div class="w-full border-2">
+            <div class="h-24 w-full sticky top-0 bg-gray-200 p-1 overflow-y-auto">
+              <div class="text-lg font-semibold">
+                Exclude Region
+                <span v-if="gameSettings.gameDuplicates">(Duplicates)</span>
+              </div>
+              <div v-if="gameSettings.gameDuplicates" class="italic text-xs">
+                In searching for the unique rom will remove first region then will select a random one from what
+                remains.
+                If none remains then a rom random rom will be selected.
+              </div>
+              <div v-else class="italic text-xs">Select which regions you want to exclude</div>
+              <div class="w-full">
+                <input type="checkbox" v-model="toggleRegions" id="toggle-regions">
+                <label class="cursor-pointer" for="toggle-regions">Toggle All</label>
+              </div>
             </div>
-            <div v-if="gameSettings.gameDuplicates" class="italic text-xs">
-              In searching for the unique rom will remove first region then will select a random one from what remains. If none remains then a rom random rom will be selected.
-            </div>
-            <div v-else class="italic text-xs">Select which regions you want to exclude</div>
-            <div class="w-full">
-              <input type="checkbox" v-model="toggleRegions" id="toggle-regions">
-              <label class="cursor-pointer" for="toggle-regions">Toggle All</label>
-            </div>
-            <div class="w-full h-56 my-2 overflow-y-auto">
+            <div class="w-full my-2 overflow-y-auto p-1">
               <div class="w-full hover:bg-gray-200 px-1" v-for="(item, cnt) in regions">
                 <input type="checkbox" v-model="selectedRegions" :value="item" :id="'regions-' + cnt">
                 <label class="cursor-pointer" :for="'regions-'+cnt">{{item}}</label>
               </div>
             </div>
           </div>
+        </div>
+
+        <div class="w-full" v-if="currentTab == 'extra'">
           <!-- extra filters for roms clones -->
-          <div class="border-2 p-1">
-            <div class="text-lg font-semibold">Extra filters</div>
-            <div class="italic text-xs">
-              Even after the above filters, there may still be some clones with different names, sets or versions.
-              This will exclude all game roms that contain this exact string.
+          <div class="border-2">
+            <div class="w-full sticky top-0 bg-gray-200 p-1">
+              <div class="text-lg font-semibold">Extra filters</div>
+              <div class="italic text-xs">
+                Even after the above filters, there may still be some clones with different names, sets or versions.
+                This will exclude all game roms that contain this exact string.
+              </div>
+              <div class="flex items-center">
+                <div>
+                  <input type="checkbox" v-model="toggleGameClones" id="toggle-game-clones">
+                  <label class="cursor-pointer" for="toggle-game-clones">Toggle All</label>
+                </div>
+                <div class="ml-2">
+                  <input class="w-full border-2 rounded-md px-1" type="text" v-model="findClones" placeholder="Find...">
+                </div>
+                <div class="ml-2">
+                  <input class="border-2 rounded-md px-1" type="text" v-model="extraFilter" placeholder="Add...">
+                  <button class="rounded-md bg-gray-300 px-2 py-1 font-semibold" @click="addExtraFilter">Add Extra
+                    Filter</button>
+                </div>
+              </div>
             </div>
-            <div class="flex">
-              <div>
-                <input type="checkbox" v-model="toggleGameClones" id="toggle-game-clones">
-                <label class="cursor-pointer" for="toggle-game-clones">Toggle All</label>
-              </div>
-              <div class="ml-2">
-                <input class="w-full border-2 rounded-md px-1" type="text" v-model="findClones" placeholder="Find...">
-              </div>
-              <div class="ml-2">
-                <input class="border-2 rounded-md px-1" type="text" v-model="extraFilter" placeholder="Add...">
-                <button class="rounded-md bg-gray-200 px-2 py-1" @click="addExtraFilter">Add Extra Filter</button>
-              </div>
-            </div>
-            <div class="grid grid-cols-3 h-56 my-2 overflow-y-auto">
+            <div class="grid grid-cols-3 my-2 overflow-y-auto p-1">
               <div :class="{'hidden' : findClones && !item.toLowerCase().includes(findClones.toLowerCase()) }"
                 class="w-full hover:bg-gray-200 px-1" v-for="(item, cnt) in extraFilters">
                 <input type="checkbox" v-model="selectedExtraFilters" :value="item" :id="'gameclone-' + cnt">
@@ -176,7 +216,7 @@
       </div>
 
       <!-- continue to next step -->
-      <div class="flex mt-4 justify-between">
+      <div class="flex justify-between p-2">
         <a href="/" class="bg-slate-500 px-4 py-2 text-white rounded-md">
           Back
         </a>
@@ -202,7 +242,7 @@
 
   <script src="/js/jquery.min.js"></script>
   <script src="/js/wsEvents.js"></script>
-  <script src="/js/mame-settings.js"></script>
+  <script src="/js/filter-settings.js"></script>
   <script src="/js/vue.js"></script>
   <script>
 
@@ -210,6 +250,8 @@
       el: "#app",
       data: {
         // UI
+        filterHeight: 500,
+        currentTab: null,
         extraFilter: null,
         emulator: null,
         jsonConfigRom: false,
@@ -237,7 +279,7 @@
             this.updateSubCategory();
           },
           deep: true
-        },
+        }
       },
       computed: {
         toggleCategories: {
@@ -306,7 +348,7 @@
         },
       },
       methods: {
-        addExtraFilter() {
+        addExtraFilter () {
           this.extraFilters = [this.extraFilter].concat(this.extraFilters);
           this.extraFilter = null;
         },
@@ -331,15 +373,25 @@
             alert('Please select a sub category!');
             return false;
           }
-
-          const selectedFilters = {
-            emulator: this.emulator,
-            categories: this.selectedCategories,
-            subCategories: this.selectedSubCategories,
-            gameSettings: this.gameSettings,
-            extraSettings: this.selectedExtraSettings,
-            extraFilters: this.selectedExtraFilters,
-            excludeRegions: this.selectedRegions
+          let selectedFilters = null;
+          if (this.emulator == 'mame') {
+            selectedFilters = {
+              emulator: this.emulator,
+              categories: this.selectedCategories,
+              subCategories: this.selectedSubCategories,
+              gameSettings: this.gameSettings,
+              extraSettings: this.selectedExtraSettings,
+              extraFilters: this.selectedExtraFilters,
+              excludeRegions: this.selectedRegions
+            }
+          } else {
+            selectedFilters = {
+              emulator: this.emulator,
+              gameSettings: this.gameSettings,
+              extraSettings: this.selectedExtraSettings,
+              extraFilters: this.selectedExtraFilters,
+              excludeRegions: this.selectedRegions
+            }
           }
 
           // save data to local storage
@@ -370,23 +422,27 @@
           this.selectedSubCategories = [...this.selectedSubCategories.filter(v => this.subCategories.includes(v))];
         },
         async loadDefaults () {
-          const data = await mameSettings();
+          const data = this.emulator == 'mame' ? await mameSettings() : await fbneoSettings();
 
           //load defaults
-          this.categoriesMap = data.categoriesMap;
-          this.mainCategories = data.mainCategories;
-          this.subCategories = data.subCategories;
+          if (this.emulator == 'mame') {
+            this.categoriesMap = data.categoriesMap;
+            this.mainCategories = data.mainCategories;
+            this.subCategories = data.subCategories;
+            this.selectedCategories = data.selectedCategories;
+            this.selectedSubCategories = data.selectedSubCategories;
+
+            this.updateSubCategory();
+          }
+
           this.regions = data.regions;
           this.excludeGamesContaining = data.excludeGamesContaining;
           this.extraFilters = data.extraFilters;
-          this.selectedCategories = data.selectedCategories;
-          this.selectedSubCategories = data.selectedSubCategories;
           this.selectedRegions = data.selectedRegions;
           this.gameSettings = data.gameSettings;
           this.selectedExtraSettings = data.selectedExtraSettings;
           this.selectedExtraFilters = data.selectedExtraFilters;
 
-          this.updateSubCategory();
         },
         // check for previous json generated file to allow user to use it instead of generating a new one
         async checkForPrevJson () {
@@ -411,6 +467,7 @@
       },
       mounted () {
         this.emulator = localStorage.getItem('emulator');
+        this.currentTab = this.emulator == 'mame' ? 'categories' : 'settings';
         this.loadDefaults();
         this.checkForPrevJson();
       }
