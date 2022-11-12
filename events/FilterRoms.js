@@ -111,7 +111,7 @@ function sendWsSignal (webSocket, msg, newLine = true) {
  * Filter roms by category and sub category and return an object
  * */
 function getRomCategoriesFromIniAndFilter (webSocket, emulator, path, categories, subCategories) {
-  const file = `${path}/${emulator}.ini`;
+  const file = fs.existsSync(`${path}/${emulator}.ini`) ? `${path}/${emulator}.ini` : `${path}/data/${emulator}.ini`;
   const roms = [];
   let data = null;
 

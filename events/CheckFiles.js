@@ -1,7 +1,7 @@
 const fs = require("fs");
 const path = require('path');
 
-module.exports = function (emulator) {
+module.exports = function (emulator, useDefaultIni) {
   const dir = path.resolve('./');
 
   const missingFiles = [];
@@ -10,7 +10,7 @@ module.exports = function (emulator) {
     missingFiles.push(`Can't find ${dir}/${emulator}.dat or ${dir}/${emulator}.xml`);
   }
 
-  if (emulator == 'mame') {
+  if (emulator == 'mame' && useDefaultIni == 'false') {
     // check for ini
     if (!fs.existsSync(`${dir}/${emulator}.ini`)) {
       missingFiles.push(`Can't find ${dir}/${emulator}.ini`);

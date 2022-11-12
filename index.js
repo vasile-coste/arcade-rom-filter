@@ -29,7 +29,7 @@ app.use(Express.static(path.join(__dirname, 'public')));
 
 // check if files were already uploaded
 app.post('/checkFile', function (req, res) {
-  const data = CheckFiles(req.body.emulator);
+  const data = CheckFiles(req.body.emulator, req.body.useDefaultIni);
   res.send(data);
 });
 

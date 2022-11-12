@@ -86,18 +86,10 @@
             </div>
             <div class="w-full border-2 px-2 py-3 mt-2">
               <div class="flex">
-                <input class="hidden" type="file" @change="uploadMameXML" id="mame_xml" accept=".xml,.dat">
-                <label class="cursor-pointer bg-blue-700 text-white flex items-center justify-center w-48 text-center"
-                  for="mame_xml">
-                  Choose .XML/.DAT
-                </label>
-
-                <div class="progress-wrp w-full" id="mame_xml-progress">
-                  <div class="progress-bar"></div>
-                  <div class="status">0%</div>
-                </div>
+                  <input type="checkbox" id="useDefaultIni" checked>
+                  <label for="useDefaultIni" @click="handleDefaultINI">Use Default Mame INI</label>
               </div>
-              <div class="flex mt-1">
+              <div class="flex mt-1" v-if="!useDefaultIni">
                 <input class="hidden" type="file" @change="uploadMameINI" id="mame_ini" accept=".ini">
                 <label class="cursor-pointer bg-blue-700 text-white flex items-center justify-center w-48 text-center"
                   for="mame_ini">
@@ -105,6 +97,18 @@
                 </label>
 
                 <div class="progress-wrp w-full" id="mame_ini-progress">
+                  <div class="progress-bar"></div>
+                  <div class="status">0%</div>
+                </div>
+              </div>
+              <div class="flex mt-4">
+                <input class="hidden" type="file" @change="uploadMameXML" id="mame_xml" accept=".xml,.dat">
+                <label class="cursor-pointer bg-blue-700 text-white flex items-center justify-center w-48 text-center"
+                  for="mame_xml">
+                  Choose .XML/.DAT
+                </label>
+
+                <div class="progress-wrp w-full" id="mame_xml-progress">
                   <div class="progress-bar"></div>
                   <div class="status">0%</div>
                 </div>
@@ -175,6 +179,7 @@
         ],
         isSuccess: false,
         messages: [],
+        useDefaultIni: true,
       },
       watch: {
         emulator () {
@@ -182,6 +187,10 @@
         }
       },
       methods: {
+        handleDefaultINI () {
+          this.useDefaultIni = !this.useDefaultIni;
+          this.checkFiles();
+        },
         setEmulator () {
           this.messages = [];
           if (!this.emulator) {
@@ -204,7 +213,8 @@
             url: '/checkFile',
             type: 'POST',
             data: {
-              emulator: this.emulator
+              emulator: this.emulator,
+              useDefaultIni: this.useDefaultIni
             }
           });
 
